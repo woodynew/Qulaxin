@@ -18,10 +18,10 @@ npm run build
 ### 接口域名的配置在根目录的api.js里面，同时需要配置一下vue.config.js
 ```
 api.js的配置
-baseURL: 'http://mp.guanggaodaren.com/'
+baseURL: 'https://mapi.qulaxin.com/'
 
 vue.config.js的配置
-target: 'http://mp.guanggaodaren.com/api/v1/',
+target: 'https://mapi.qulaxin.com/api/v1/',
 ```
 ### 项目部署
 ```
