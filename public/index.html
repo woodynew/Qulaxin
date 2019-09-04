@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="趣拉新">
+    <meta name="application-name" content="趣拉新">
+    <meta name="msapplication-TileImage" content="趣拉新">
+    <meta name="msapplication-TileColor" content="#000">
+    <!-- 添加manifest文件 -->
+    <link rel="manifest" href="<%= BASE_URL %>manifest.json">
+    <link rel="shortcut icon" href="<%= BASE_URL %>favicon.ico">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <link rel="Bookmark" href="<%= BASE_URL %>favicon.ico">
+    <link rel="apple-touch-icon" href="<%= BASE_URL %>apple-touch-icon.png">
+    <title>趣拉新</title>
+    <script src="//g.alicdn.com/fdilab/lib3rd/viewport-units-buggyfill/0.6.2/??viewport-units-buggyfill.hacks.min.js,viewport-units-buggyfill.min.js"></script>
+    <script>
+        window.onload = function () {
+            window.viewportUnitsBuggyfill.init({ hacks: window.viewportUnitsBuggyfillHacks });
+        };
+    </script>
+</head>
+<body>
+<noscript>
+    <strong>很抱歉，如果禁用JavaScript，页面不能正常运行。请启用它继续.</strong>
+</noscript>
+<div id="app"></div>
+<!-- built files will be auto injected -->
+</body>
+</html>

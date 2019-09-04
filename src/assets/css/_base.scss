@@ -1,0 +1,106 @@
+//_base.scss 设计图宽度除以10,假如设计图宽度是750px那么，基础宽度就是75
+//$baseWidthSize: 75 !default;
+@function to($px) {
+  @return $px * 1px;
+}
+
+/*----------- 基础样式 ------------*/
+.clear:after {clear: both;display: block;content: '';}
+.clearfix:after{ clear: both;display: block;visibility: hidden;height: 0;content: ".";}
+.overflow{overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+.clear{clear: both;}
+.clearmg{margin: 0 !important;}
+.clearpd{padding: 0 !important;}
+.bdb-1px, .bdt-1px, .bdr-1px, .bdl-1px{position: relative;}
+.bdt-1px:before{position: absolute;top: 0;right: 0;left: 0;z-index: 1;border-top: 1px solid #EAEAEA;content: "";-webkit-transform: scaleY(0.5);transform: scaleY(0.5);-webkit-transform-origin: 0 0;transform-origin: 0 0;}
+.bdb-1px:after{position: absolute;right: 0;bottom: -1px;left: 0;z-index: 1;border-bottom: 1px solid #EAEAEA;content: "";-webkit-transform: scaleY(0.5);transform: scaleY(0.5);-webkit-transform-origin: 0 0;transform-origin: 0 0;}
+.bdl-1px:before{position: absolute;top: 0;bottom: 0;left: 0;z-index: 1;border-left: 1px solid #EAEAEA;content: "";-webkit-transform: scaleX(0.5);transform: scaleX(0.5);-webkit-transform-origin: 0 0;transform-origin: 0 0;}
+.bdr-1px:after{position: absolute;top: 0;right: 0;bottom: 0;z-index: 1;border-right: 1px solid #EAEAEA;content: "";-webkit-transform: scaleX(0.5);transform: scaleX(0.5);-webkit-transform-origin: 0 0;transform-origin: 0 0;}
+.fl{float: left;}
+.fr{float: right;}
+.hide{display:none;}
+.show{display:block;}
+.bg-w{background:white;}
+/*单行省略*/
+.nowrap {  overflow: hidden; /*设置超过的隐藏*/   -o-text-overflow: ellipsis; /*兼容opera*/  text-overflow: ellipsis; /*这就是省略号喽*/  white-space: nowrap; /*设置不折行*/  }
+/*多行省略*/
+.mowrap {  overflow: hidden;  display: -webkit-box;  -webkit-line-clamp: 2;  -webkit-box-orient: vertical;  }
+/*图片100%*/
+img{width: 100%;height:100%;display: block}
+/*flex布局*/
+.flex-item{display: flex;display: -webkit-flex;align-items: center;-webkit-align-items: center;}
+
+/* 点击效果 */
+.tap-ripple{position: relative;/* 隐藏溢出的径向渐变背景 */overflow: hidden;}
+.tap-ripple:after{content: "";display: block;position: absolute;width: 100%;height: 100%;top: 0;left: 0;pointer-events: none;/* 设置径向渐变 */background-image: radial-gradient(circle, #D4D4D4 10%, transparent 10.01%);background-repeat: no-repeat;background-position: 50%;transform: scale(10, 10);opacity: 0;transition: transform .3s, opacity .5s;}
+.tap-ripple:active:after{transform: scale(0, 0);opacity: .3;/* 设置初始状态 */transition: 0s;}
+
+
+/* 页面过渡效果 */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .2s ease-out;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */{
+  opacity: 0;
+}
+
+.fade-left-enter-active {
+  animation-name: fadeInLeft;
+  animation-duration: .3s;
+}
+.fade-left-leave-active {
+  animation-name: fadeOutLeft;
+  animation-duration: .3s;
+}
+.fade-right-enter-active {
+  animation-name: fadeInRight;
+  animation-duration: .3s;
+}
+.fade-right-leave-active {
+  animation-name: fadeOutRight;
+  animation-duration: .3s;
+}
+@keyframes fadeInLeft {
+  0% {
+    opacity:0;
+    transform:translate3d(-100%,0,0)
+  }
+  to {
+    opacity:1;
+    transform:translateZ(0)
+  }
+}
+@keyframes fadeInRight {
+  0% {
+    opacity:0;
+    transform:translate3d(100%,0,0)
+  }
+  to {
+    opacity:1;
+    transform:translateZ(0)
+  }
+}
+@keyframes fadeOutLeft {
+  0% {
+    opacity:1
+  }
+  to {
+    opacity:0;
+    transform:translate3d(-100%,0,0)
+  }
+}
+@keyframes fadeOutRight {
+  0% {
+    opacity:1
+  }
+  to {
+    opacity:0;
+    transform:translate3d(100%,0,0)
+  }
+}
+
+
+.task-popup .start-text .start-tit a{
+  color: #FF8455 !important;
+  text-decoration: underline;
+}
