@@ -134,12 +134,12 @@
             <!-- 提交任务板块 -->
             <div class="detail-card" v-if="taskStatus == 0 || taskStatus == 3">
                 <div class="detail-head flex-item">
-                    <div class="task-title">提交任务</div>
+                    <div class="task-title">提交凭证</div>
                 </div>
-                
+
                 <div class="form-warp" v-if="uploadList.length > 0">
 					<!-- <div class="form-label">{{taskData.child_list[curTaskIndex].submit_text_list.length + 1}}. 根据 “图例教程” 上任务中遇到的对应截图</div> -->
-                    <div class="form-label">1. 根据 “图例教程” 上任务中遇到的对应截图</div>
+                    <div class="form-label">1. 截图凭证<span>（注意☆号图例）</span></div>
                 </div>
                 <div class="tutorial-warp flex-item" v-if="uploadList.length > 0">
                     <div class="upload-item" v-for="(item, index) in uploadList" :key="index">
@@ -151,12 +151,12 @@
                         <div class="upload-title">{{item.title}}</div>
                     </div>
                 </div>
-				
+
 				<div class="form-warp" v-for="(item, index) in taskData.child_list[curTaskIndex].submit_text_list" :key="index">
-                    <div class="form-label">{{index + 2}}. 填写 “{{item}}”</div>
+                    <div class="form-label">{{index + 2}}. 填写文本凭证</div>
                     <input class="form-input" @input="onInputData(index, $event)" type="text" :placeholder="'请填写' + item">
                 </div>
-				
+
                 <div class="page-btn btn-gray tap-ripple" :class="{'btn-blue' : startTask === 'true'}" @click.stop="onSubmitReview">提交审核</div>
             </div>
 
@@ -1277,6 +1277,7 @@
         }
         .tutorial-warp{
             flex-wrap: wrap;
+            margin-bottom: to(25);
             .tutorial-item{
                 position: relative;
                 border-radius: to(16);
@@ -1329,8 +1330,8 @@
                 }
             }
             .upload-item{
-                margin-right: to(7);
-                margin-bottom: to(7);
+                margin-right: to(12);
+                margin-bottom: to(12);
                 .upload-img{
                     border-radius: to(16);
                     border: solid to(6) #333333;
@@ -1460,6 +1461,9 @@
             font-size: to(24);
             margin-bottom: to(24);
             font-weight: bold;
+            span{
+                color: #FF8455;
+            }
         }
 
         .form-input {
@@ -1489,7 +1493,7 @@
         padding-top: to(18);
         position: relative;
         z-index: 1;
-        margin: to(16) auto to(0);
+        margin: to(42) auto to(0);
     }
     .page-btn.btn-yellow {
         background-image: url(../assets/images/btn_yellow.png);
