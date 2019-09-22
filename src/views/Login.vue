@@ -39,12 +39,6 @@
         methods: {
             //获取验证码
             getAuthCode(){
-                let reg = /^0?1[3|4|5|6|7|8|9][0-9]\d{8}$/;
-                if(!reg.test(this.phone)){
-                    this.$toast("手机号码格式不正确");
-                    this.phoneFocus = true
-                    return;
-                }
                 this.$api.post('ajax/send-auth-code', {
                     phone: this.phone
                 }).then(res => {

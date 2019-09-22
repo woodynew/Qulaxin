@@ -82,6 +82,12 @@
                 <div class="detail-head flex-item">
                     <div class="task-left">任务{{curTaskIndex + 1}}： {{taskData.child_list[curTaskIndex].title}}</div>
 <!--                    <div class="task-right" :style="{color: taskData.main_color}">{{taskData.child_list[curTaskIndex].price}}元奖励金</div>-->
+                    <div class="task-icon" @click.stop="showIconTipsPopup(1)" v-if="taskData.child_list[curTaskIndex].label_list[0]">
+                        <div class="btn-icon">
+                            <img src="../assets/images/icon1.png" alt="" />
+                        </div>
+                        <span class="btn-title">{{iconTipsList[taskData.child_list[curTaskIndex].label_list[0]]}}</span>
+                    </div>
                 </div>
                 <div class="form-warp">
                     <div class="form-label" v-if="taskStatus != 2 && taskStatus != 1 && taskStatus != -1">任务须知：</div>
@@ -133,8 +139,20 @@
 
             <!-- 提交任务板块 -->
             <div class="detail-card" v-if="taskStatus == 0 || taskStatus == 3">
-                <div class="detail-head flex-item">
+                <div class="detail-head flex-item flex-compact">
                     <div class="task-title">提交凭证</div>
+                    <div class="task-icon" @click.stop="showIconTipsPopup(2)" v-if="taskData.child_list[curTaskIndex].label_list[1]">
+                        <div class="btn-icon btn-green">
+                            <img src="../assets/images/icon2.png" alt="" />
+                        </div>
+                        <span class="btn-title">{{iconTipsList[taskData.child_list[curTaskIndex].label_list[1]]}}</span>
+                    </div>
+                    <div class="task-icon" @click.stop="showIconTipsPopup(3)" v-if="taskData.child_list[curTaskIndex].label_list[2]">
+                        <div class="btn-icon btn-red">
+                            <img src="../assets/images/icon3.png" alt="" />
+                        </div>
+                        <span class="btn-title">{{iconTipsList[taskData.child_list[curTaskIndex].label_list[2]]}}</span>
+                    </div>
                 </div>
 
                 <div class="form-warp" v-if="uploadList.length > 0">
@@ -153,7 +171,7 @@
                 </div>
 
 				<div class="form-warp" v-for="(item, index) in taskData.child_list[curTaskIndex].submit_text_list" :key="index">
-                    <div class="form-label">{{index + 2}}. 填写文本凭证</div>
+                    <div class="form-label">{{index + 2}}. 文本凭证</div>
                     <input class="form-input" @input="onInputData(index, $event)" type="text" :placeholder="'请填写' + item">
                 </div>
 
@@ -192,13 +210,13 @@
         </transition>
 
 
-        <div class="mask" @touchmove.prevent="maskMove" v-if="isShowPopup || showLogin"
-             @click.stop="isShowPopup = false;showLogin = false"></div>
-        <div class="task-popup" @touchmove.prevent="maskMove" v-if="isShowPopup">
+        <div class="mask" @touchmove.prevent="maskMove" v-if="isShowPopup || showLogin || iconTipsPopup"
+             @click.stop="isShowPopup = false;showLogin = false;iconTipsPopup = false"></div>
+        <div class="task-popup" @touchmove.prevent="maskMove" v-if="isShowPopup || iconTipsPopup">
             <div class="task-box">
                 <div class="tit-head flex-item">
-                    <div class="head-text"><span v-if="showStartPopup">任务已开始</span></div>
-                    <div class="tit-close flex-item" @click.stop="isShowPopup = false">
+                    <div class="head-text"><span v-if="showStartPopup">任务已开始</span><span v-if="iconTipsPopup">{{iconTipsTitle}}</span></div>
+                    <div class="tit-close flex-item" @click.stop="isShowPopup = false; iconTipsPopup = false">
                         <img src="../assets/images/close_detail.png" alt=""/>
                     </div>
                 </div>
@@ -218,6 +236,10 @@
                         <div>{{taskData.child_list[curTaskIndex].start_keyword}}</div>
                         <div class="copy-tips">- 长按复制 -</div>
                     </div>
+                </div>
+                <div v-else-if="iconTipsPopup" class="start-task">
+                    <div class="tips-text">{{iconTipsContent}}</div>
+                    <div class="logout-btn" @click.stop="iconTipsPopup = false">我知道了</div>
                 </div>
                 <template v-else>
                     <div class="task-title-small">想好了哦!!!</div>
@@ -264,8 +286,18 @@
                 branchLuckIcon: require('../assets/images/btn_icon02.png'),
                 branchLuckIconOk: require('../assets/images/btn_icon06.png'),
                 branchLuckIconFail: require('../assets/images/btn_icon04.png'),
-                isShowPopup: false, //是否显示放弃任务弹层
-                taskStatus: 0, //当前任务状态 任务进行中0 任务审核中2 任务失败3 任务已完成1 锁定任务-1
+                isShowPopup: false, // 是否显示放弃任务弹层
+                iconTipsPopup: false, // 是否显示提示
+                iconTipsTitle: '', // 提示标题
+                iconTipsContent: '', // 提示内容
+                iconTipsList: [],
+                iconTipsImgList: [
+                    require('../assets/images/icon1.png'),
+                    require('../assets/images/icon2.png'),
+                    require('../assets/images/icon3.png')
+                ],
+                iconTipsContentList: [],
+                taskStatus: 0, // 当前任务状态 任务进行中0 任务审核中2 任务失败3 任务已完成1 锁定任务-1
                 isShowPreviewPopup: false,
                 taskData: {
                     child_list: [{
@@ -274,7 +306,8 @@
                         jftask_record: {
                             check_desc: [],
                             check_remark: ""
-                        }
+                        },
+                        label_list: []
                     }],
                     logo: require("../assets/images/logo_01.webp"),
                     title: "京东白条",
@@ -390,6 +423,12 @@
             // 防止蒙版穿透
             maskMove(){
                 return false
+            },
+            // 显示提示
+            showIconTipsPopup(type){
+                this.iconTipsTitle = this.iconTipsList[type]
+                this.iconTipsContent = this.iconTipsContentList[type]
+                this.iconTipsPopup = true
             },
             //判断页面滚动距离
             handleScroll(){
@@ -783,6 +822,9 @@
                         let colorList = res.color.split(",");
                         res.main_color = colorList[0];
                         res.second_color = colorList[1];
+                        for(let i in res.child_list){
+                            res.child_list[i].label_list = res.child_list[i].rights_label.split(",")
+                        }
                         this.taskData = res;
                         if(!localStorage.getItem('startTask_' + this.taskData.child_list[this.curTaskIndex].id)){
                             localStorage.setItem('startTask_' + this.taskData.child_list[this.curTaskIndex].id, 'false');
@@ -875,6 +917,10 @@
             clearInterval(this.overTimer)
         },
         created() {
+            this.$api.post('api/v1/jftask/config', {}).then( res => {
+                this.iconTipsContentList = res.rights_label_desc
+                this.iconTipsList = res.rights_label
+            })
             this.$store.commit('LoadingStatus', {isLoading: false});
             // 开启定时器 每隔5分钟调一次接口，刷新页面状态
             this.overTimer = setInterval(this.queryData(), 300000)
@@ -1667,6 +1713,13 @@
         .start-task{
             margin-top: to(84);
         }
+        .tips-text{
+            color: #333333;
+            font-size: to(24);
+            font-weight: bold;
+            margin-bottom: to(56);
+            text-align: justify;
+        }
         .start-text{
             .start-tit{
                 color: #333333;
@@ -1728,6 +1781,39 @@
                 margin-top: to(32);
                 text-align: center;
             }
+        }
+    }
+
+    .task-icon{
+        margin-left: to(24);
+        color: #333333;
+        background: #FFF;
+        font-size: to(24);
+        display: flex;
+        border: solid to(4) #333;
+        border-radius: to(6);
+        height: to(38);
+        .btn-icon{
+            background: #2795F7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: solid to(4) #333;
+            img{
+                width: to(34);
+                height: to(30);
+            }
+            &.btn-green{
+                background: #56BE5F;
+            }
+            &.btn-red{
+                background: #FF8455;
+            }
+        }
+        .btn-title{
+            display: flex;
+            align-items: center;
+            padding: 0 to(10);
         }
     }
 </style>

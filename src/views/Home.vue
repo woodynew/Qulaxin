@@ -131,7 +131,16 @@
                                 <div class="task-item">
                                     <div class="task-head flex-item" :style="{color: item.main_color}">
                                         <div class="tit-left">可接任务</div>
-                                        <div class="flex-item">剩余<span>{{item.surplus}}</span>份</div>
+
+                                        <div class="flex-item">
+                                            <div class="flex-item" v-if="item.surplus < 200">剩余<span>{{item.surplus}}</span>份</div>
+                                            <div class="task-icon" @click.stop="showIconTipsPopup(label)" v-for="(label, lindex) in item.label_list" :key="lindex" v-if="label">
+                                                <div class="btn-icon" :class="label == 2 ? 'btn-green' : label == 3 ? 'btn-red' : ''">
+                                                    <img :src="iconTipsImgList[label - 1]" alt="" />
+                                                </div>
+                                                <span class="btn-title">{{iconTipsList[label]}}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="task-main flex-item" :style="{background: item.main_color}">
                                         <div class="flex-item task-info">
@@ -196,17 +205,18 @@
             <img class="loading-logo" src="../assets/images/logo.png" alt=""/>
         </div>
 
-        <div class="mask" @touchmove.prevent="maskMove" v-if="isShowPopup" @click.stop="isShowPopup = false"></div>
-        <div class="task-popup" @touchmove.prevent="maskMove" v-if="isShowPopup">
+        <div class="mask" @touchmove.prevent="maskMove" v-if="isShowPopup || iconTipsPopup" @click.stop="isShowPopup = false; iconTipsPopup = false"></div>
+        <div class="task-popup" @touchmove.prevent="maskMove" v-if="isShowPopup || iconTipsPopup">
             <div class="task-box">
                 <div class="tit-head flex-item">
-                    <div class="task-title-small" v-if="isEmptyTask">哦..糟了</div>
+                    <div class="task-title-small" v-if="isEmptyTask && !iconTipsPopup">哦..糟了</div>
+                    <div class="task-title-small" v-else-if="iconTipsPopup">{{iconTipsTitle}}</div>
                     <div class="task-title-small" v-else>切换账号</div>
                     <div class="tit-close flex-item" @click.stop="hideLogOut">
                         <img src="../assets/images/close_detail.png" alt=""/>
                     </div>
                 </div>
-                <template v-if="isEmptyTask">
+                <template v-if="isEmptyTask && !iconTipsPopup">
                     <div class="task-title" style="text-align: left">任务没了?@!</div>
                     <div class="other-title" style="text-align: left">没关系，我们为您推荐以下任务</div>
                     <div class="other-task">
@@ -216,6 +226,10 @@
                         </div>
                     </div>
                 </template>
+                <div v-else-if="iconTipsPopup" class="start-task">
+                    <div class="tips-text">{{iconTipsContent}}</div>
+                    <div class="logout-btn" @click.stop="iconTipsPopup = false">我知道了</div>
+                </div>
                 <template v-else>
                     <div class="task-title">{{userData.name}}</div>
                     <div class="other-title" style="text-align: center">当前账号</div>
@@ -277,6 +291,16 @@
                 isEmptyTask: true, //是否显示没抢到任务提示 为false则显示退出登录
                 isShowWithdraw: false,
                 isShowPopup: false, //是否显示任务弹层
+                iconTipsPopup: false, // 是否显示提示
+                iconTipsTitle: '', // 提示标题
+                iconTipsContent: '', // 提示内容
+                iconTipsList: [],
+                iconTipsImgList: [
+                    require('../assets/images/icon1.png'),
+                    require('../assets/images/icon2.png'),
+                    require('../assets/images/icon3.png')
+                ],
+                iconTipsContentList: [],
                 isCashActive: 0, //当前选中的提现金额
                 activeSwiper: -1, //当前活动的滑块
                 authNum: 60, //倒计时
@@ -325,6 +349,7 @@
             hideLogOut(){
                 this.isEmptyTask = true;
                 this.isShowPopup = false;
+                this.iconTipsPopup = false;
             },
             // 显示退出登录
             showLogOut(){
@@ -445,7 +470,8 @@
                                 for(let i in res.dataList){
                                     let colorList = res.dataList[i].color.split(",");
                                     res.dataList[i].main_color = colorList[0];
-                                    res.dataList[i].second_color = colorList[1];
+                                    res.dataList[i].second_color = colorList[1]
+                                    res.dataList[i].label_list = res.dataList[i].rights_label
                                 }
                                 console.log(res.dataList);
                                 this.taskList = this.taskList.concat(res.dataList)
@@ -541,6 +567,12 @@
             // 防止蒙版穿透
             maskMove(){
               return false
+            },
+            // 显示提示
+            showIconTipsPopup(type){
+                this.iconTipsTitle = this.iconTipsList[type]
+                this.iconTipsContent = this.iconTipsContentList[type]
+                this.iconTipsPopup = true
             },
             // 返回大厅
             hideWithdrawWarp() {
@@ -841,7 +873,7 @@
                                 for(let i in res.dataList){
                                     let colorList = res.dataList[i].color.split(",");
                                     res.dataList[i].main_color = colorList[0];
-                                    res.dataList[i].second_color = colorList[1];
+                                    res.dataList[i].second_color = colorList[1]
                                 }
                                 this.completedList = res.dataList;
                             });
@@ -859,7 +891,8 @@
                                 for(let i in res.dataList){
                                     let colorList = res.dataList[i].color.split(",");
                                     res.dataList[i].main_color = colorList[0];
-                                    res.dataList[i].second_color = colorList[1];
+                                    res.dataList[i].second_color = colorList[1]
+                                    res.dataList[i].label_list = res.dataList[i].rights_label
                                 }
                                 this.taskList = res.dataList;
                             });
@@ -872,7 +905,7 @@
                                 for(let i in res.dataList){
                                     let colorList = res.dataList[i].color.split(",");
                                     res.dataList[i].main_color = colorList[0];
-                                    res.dataList[i].second_color = colorList[1];
+                                    res.dataList[i].second_color = colorList[1]
                                 }
                                 this.ongoingList = res.dataList;
                             });
@@ -1017,7 +1050,8 @@
                     for(let i in res.dataList){
                         let colorList = res.dataList[i].color.split(",");
                         res.dataList[i].main_color = colorList[0];
-                        res.dataList[i].second_color = colorList[1];
+                        res.dataList[i].second_color = colorList[1]
+                        res.dataList[i].label_list = res.dataList[i].rights_label
                     }
                     this.taskList = res.dataList;
                 });
@@ -1030,7 +1064,7 @@
                     for(let i in res.dataList){
                         let colorList = res.dataList[i].color.split(",");
                         res.dataList[i].main_color = colorList[0];
-                        res.dataList[i].second_color = colorList[1];
+                        res.dataList[i].second_color = colorList[1]
                     }
                     this.ongoingList = res.dataList;
                 });
@@ -1072,6 +1106,11 @@
             clearInterval(this.overTimer)
         },
         created() {
+            this.$api.post('api/v1/jftask/config', {}).then( res => {
+                this.iconTipsContentList = res.rights_label_desc
+                this.iconTipsList = res.rights_label
+            })
+
             this.overTimer = setInterval(function(){
                 // 获取用户信息
                 this.$api.post('api/v1/user/info', {
@@ -1623,6 +1662,16 @@
                 height: to(32);
             }
         }
+        .start-task{
+            margin-top: to(84);
+        }
+        .tips-text{
+            color: #333333;
+            font-size: to(24);
+            font-weight: bold;
+            margin-bottom: to(56);
+            text-align: justify;
+        }
         .logout-btn{
             background: #FF8455;
             text-align: center;
@@ -1729,4 +1778,36 @@
 
     .color-gray{color: #BBBBBB}
     .color-red{color: #D45036}
+
+    .task-icon{
+        margin-left: to(24);
+        color: #333333;
+        background: #FFF;
+        font-size: to(24);
+        display: flex;
+        border: solid to(4) #333;
+        border-radius: to(6);
+        .btn-icon{
+            background: #2795F7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: solid to(4) #333;
+            img{
+                width: to(34);
+                height: to(30);
+            }
+            &.btn-green{
+                background: #56BE5F;
+            }
+            &.btn-red{
+                background: #FF8455;
+            }
+        }
+        .btn-title{
+            display: flex;
+            align-items: center;
+            padding: 0 to(10);
+        }
+    }
 </style>
