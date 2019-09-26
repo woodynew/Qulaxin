@@ -133,7 +133,7 @@
                                         <div class="tit-left">可接任务</div>
 
                                         <div class="flex-item">
-                                            <div class="flex-item" v-if="item.surplus < 200">剩余<span>{{item.surplus}}</span>份</div>
+                                            <div class="flex-item" v-if="item.surplus < 200">剩余<span class="item-surplus">{{item.surplus}}</span>份</div>
                                             <div class="task-icon" @click.stop="showIconTipsPopup(label)" v-for="(label, lindex) in item.label_list" :key="lindex" v-if="label">
                                                 <div class="btn-icon" :class="label == 2 ? 'btn-green' : label == 3 ? 'btn-red' : ''">
                                                     <img :src="iconTipsImgList[label - 1]" alt="" />
@@ -971,11 +971,36 @@
                 }).then( res => {
                     // 复位
                     this.restSlide();
-                    if(this.ongoingList[index].status == 1){
-                        this.taskList.unshift(this.ongoingList[index]);
-                    }
-                    // 删除
-                    this.ongoingList.splice(index, 1);
+                    // 获取任务大厅的任务列表
+                    this.$api.post('api/v1/jftask/list', {
+                        session_id: localStorage.getItem('sessionId'), //登录标识
+                        qlx_trackid: localStorage.getItem('trackId') || "", //渠道id
+                        page: 1, //当前页数
+                        page_size: 10, //每页数量
+                        status: -1 //用户任务状态
+                    }).then( res => {
+                        this.loading = false;
+                        for(let i in res.dataList){
+                            let colorList = res.dataList[i].color.split(",");
+                            res.dataList[i].main_color = colorList[0];
+                            res.dataList[i].second_color = colorList[1]
+                            res.dataList[i].label_list = res.dataList[i].rights_label
+                        }
+                        this.taskList = res.dataList;
+                    });
+
+                    // 获取进行中的任务列表
+                    this.$api.post('api/v1/jftask/list', {
+                        session_id: localStorage.getItem('sessionId'), //登录标识
+                        status: 0 //用户任务状态
+                    }).then( res => {
+                        for(let i in res.dataList){
+                            let colorList = res.dataList[i].color.split(",");
+                            res.dataList[i].main_color = colorList[0];
+                            res.dataList[i].second_color = colorList[1]
+                        }
+                        this.ongoingList = res.dataList;
+                    });
                 }).catch( error => {
                     // 复位
                     this.restSlide();
@@ -1348,17 +1373,16 @@
                     border: solid to(8) #333333;
                     border-radius: to(16);
                     background: #FFFFFF;
-                    padding: to(14) to(32) to(24);
+                    padding: to(16) to(20) to(32) to(24);
                     z-index: 10;
                     overflow: hidden;
-
                     .task-head {
                         justify-content: space-between;
                         -webkit-justify-content: space-between;
                         color: #BBBBBB;
                         font-family: "HYZhuZiMeiXinTiW";
                         font-size: to(26);
-                        span {
+                        .item-surplus {
                             font-family: initial;
                             font-size: to(28);
                             font-weight: bold;
@@ -1393,7 +1417,7 @@
 
                         .app-reward {
                             font-size: to(26);
-                            font-weight: bold;
+                            font-weight: 700;
                             span {
                                 font-family: "DIN Alternate Bold";
                                 font-size: to(50);
@@ -1676,11 +1700,11 @@
             background: #FF8455;
             text-align: center;
             font-weight: bold;
-            font-size: to(32);
+            font-size: to(24);
             color: #FFFFFF;
-            height: to(96);
-            line-height: to(96);
-            margin: to(48) to(16) to(0);
+            height: to(80);
+            line-height: to(80);
+            margin: to(48) to(6) to(0);
         }
         .task-box {
             border: solid to(8) #333333;
@@ -1781,12 +1805,15 @@
 
     .task-icon{
         margin-left: to(24);
+        margin-top: to(-8);
         color: #333333;
         background: #FFF;
         font-size: to(24);
         display: flex;
         border: solid to(4) #333;
         border-radius: to(6);
+        font-family: initial;
+        font-weight: bold;
         .btn-icon{
             background: #2795F7;
             display: flex;
@@ -1807,7 +1834,7 @@
         .btn-title{
             display: flex;
             align-items: center;
-            padding: 0 to(10);
+            padding: 0 to(6);
         }
     }
 </style>

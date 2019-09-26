@@ -1286,6 +1286,8 @@
             }
         }
         .detail-head{
+            display: flex;
+            align-items: flex-start;
             justify-content: space-between;
             font-weight: bold;
             margin-bottom: to(40);
@@ -1296,6 +1298,7 @@
             .task-left{
                 color: #333333;
                 font-size: to(24);
+                flex: 1;
             }
             .task-right{
                 color: #FF8455;
@@ -1661,8 +1664,8 @@
         transform: translateY(-50%);
         border-radius: to(16);
         word-break: break-all;
-        left: to(132);
-        right: to(132);
+        left: to(130);
+        right: to(130);
         .tit-head{
             justify-content: space-between;
             .head-text{
@@ -1672,21 +1675,22 @@
         }
         .tit-close {
             justify-content: center;
+            margin-top: to(-6);
             img{
                 display: block;
-                width: to(32);
-                height: to(32);
+                width: to(28);
+                height: to(28);
             }
         }
         .logout-btn{
             background: #FF8455;
             text-align: center;
             font-weight: bold;
-            font-size: to(32);
+            font-size: to(24);
             color: #FFFFFF;
-            height: to(96);
-            line-height: to(96);
-            margin: to(16) to(16) to(0);
+            height: to(80);
+            line-height: to(80);
+            margin: to(16) to(6) to(0);
         }
         .task-box {
             border: solid to(8) #333333;
@@ -1711,7 +1715,7 @@
         }
 
         .start-task{
-            margin-top: to(84);
+            margin-top: to(74);
         }
         .tips-text{
             color: #333333;
