@@ -1477,6 +1477,12 @@
         *{
             color: #666666
         }
+        .task-icon{
+            background: #999999;
+            .btn-icon{
+                background: #4581b7;
+            }
+        }
         .task-right, .task-tutorial > span{
             color: #FFFFFF !important;
         }
