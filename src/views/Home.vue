@@ -138,7 +138,7 @@
                                                 <div class="btn-icon" :class="label == 2 ? 'btn-green' : label == 3 ? 'btn-red' : ''">
                                                     <img :src="iconTipsImgList[label - 1]" alt="" />
                                                 </div>
-                                                <span class="btn-title">{{iconTipsList[label]}}</span>
+                                                <div class="btn-title">{{iconTipsList[label]}}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -1810,16 +1810,19 @@
         background: #FFF;
         font-size: to(24);
         display: flex;
-        border: solid to(4) #333;
         border-radius: to(6);
         font-family: initial;
         font-weight: bold;
+        height: 38px;
+        overflow: hidden;
         .btn-icon{
+            border: solid to(4) #333;
+            border-radius: to(6) 0 0 to(6);
             background: #2795F7;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-right: solid to(4) #333;
+            height: 38px;
             img{
                 width: to(34);
                 height: to(30);
@@ -1832,9 +1835,13 @@
             }
         }
         .btn-title{
+            height: 38px;
             display: flex;
             align-items: center;
             padding: 0 to(6);
+            border: solid to(4) #333;
+            border-radius: 0 to(6) to(6) 0;
+            border-left: 0;
         }
     }
 </style>

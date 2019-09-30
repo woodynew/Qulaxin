@@ -1802,17 +1802,19 @@
         font-size: to(24);
         display: flex;
         align-items: center;
-        border: solid to(4) #333;
         border-radius: to(6);
-        height: 40px;
+        height: 38px;
         overflow: hidden;
+        font-weight: bold;
+        font-family: initial;
         .btn-icon{
             background: #2795F7;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-right: solid to(4) #333;
-            height: 100%;
+            border-radius: to(6) 0 0 to(6);
+            border: solid to(4) #333;
+            height: 38px;
             img{
                 width: to(34);
                 height: to(30);
@@ -1825,12 +1827,13 @@
             }
         }
         .btn-title{
+            height: 38px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            flex: 1;
-            height: 100%;
             padding: 0 to(10);
+            border: solid to(4) #333;
+            border-radius: 0 to(6) to(6) 0;
+            border-left: 0;
         }
     }
 </style>
