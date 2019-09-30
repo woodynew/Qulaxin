@@ -1801,9 +1801,12 @@
         background: #FFF;
         font-size: to(24);
         display: flex;
+        align-items: center;
         border: solid to(4) #333;
         border-radius: to(6);
-        height: to(38);
+        height: 38px;
+        overflow: hidden;
+        line-height: 1;
         .btn-icon{
             background: #2795F7;
             display: flex;
