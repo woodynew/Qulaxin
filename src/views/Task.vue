@@ -82,7 +82,7 @@
                 <div class="detail-head flex-item">
                     <div class="task-left">任务{{curTaskIndex + 1}}： {{taskData.child_list[curTaskIndex].title}}</div>
 <!--                    <div class="task-right" :style="{color: taskData.main_color}">{{taskData.child_list[curTaskIndex].price}}元奖励金</div>-->
-                    <div class="task-icon" @click.stop="showIconTipsPopup(1)" v-if="taskData.child_list[curTaskIndex].label_list[0] == 1">
+                    <div class="task-icon" @click.stop="showIconTipsPopup(1, taskStatus == -1)" v-if="taskData.child_list[curTaskIndex].label_list[0] == 1">
                         <div class="btn-icon">
                             <img src="../assets/images/icon1.png" alt="" />
                         </div>
@@ -141,13 +141,13 @@
             <div class="detail-card" v-if="taskStatus == 0 || taskStatus == 3">
                 <div class="detail-head flex-item flex-compact">
                     <div class="task-title">提交凭证</div>
-                    <div class="task-icon" @click.stop="showIconTipsPopup(2)" v-if="taskData.child_list[curTaskIndex].label_list[1] == 2">
+                    <div class="task-icon" @click.stop="showIconTipsPopup(2, taskStatus == -1)" v-if="taskData.child_list[curTaskIndex].label_list[1] == 2">
                         <div class="btn-icon btn-green">
                             <img src="../assets/images/icon2.png" alt="" />
                         </div>
                         <span class="btn-title">{{iconTipsList[taskData.child_list[curTaskIndex].label_list[1]]}}</span>
                     </div>
-                    <div class="task-icon" @click.stop="showIconTipsPopup(3)" v-if="taskData.child_list[curTaskIndex].label_list[2] == 3">
+                    <div class="task-icon" @click.stop="showIconTipsPopup(3, taskStatus == -1)" v-if="taskData.child_list[curTaskIndex].label_list[2] == 3">
                         <div class="btn-icon btn-red">
                             <img src="../assets/images/icon3.png" alt="" />
                         </div>
@@ -425,7 +425,8 @@
                 return false
             },
             // 显示提示
-            showIconTipsPopup(type){
+            showIconTipsPopup(type, isDisable){
+                if(isDisable) return false
                 this.iconTipsTitle = this.iconTipsList[type]
                 this.iconTipsContent = this.iconTipsContentList[type]
                 this.iconTipsPopup = true
@@ -1809,6 +1810,7 @@
             align-items: center;
             justify-content: center;
             border-right: solid to(4) #333;
+            height: 100%;
             img{
                 width: to(34);
                 height: to(30);
