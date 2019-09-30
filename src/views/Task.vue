@@ -86,7 +86,7 @@
                         <div class="btn-icon">
                             <img src="../assets/images/icon1.png" alt="" />
                         </div>
-                        <span class="btn-title">{{iconTipsList[taskData.child_list[curTaskIndex].label_list[0]]}}</span>
+                        <div class="btn-title">{{iconTipsList[taskData.child_list[curTaskIndex].label_list[0]]}}</div>
                     </div>
                 </div>
                 <div class="form-warp">
@@ -145,13 +145,13 @@
                         <div class="btn-icon btn-green">
                             <img src="../assets/images/icon2.png" alt="" />
                         </div>
-                        <span class="btn-title">{{iconTipsList[taskData.child_list[curTaskIndex].label_list[1]]}}</span>
+                        <div class="btn-title">{{iconTipsList[taskData.child_list[curTaskIndex].label_list[1]]}}</div>
                     </div>
                     <div class="task-icon" @click.stop="showIconTipsPopup(3, taskStatus == -1)" v-if="taskData.child_list[curTaskIndex].label_list[2] == 3">
                         <div class="btn-icon btn-red">
                             <img src="../assets/images/icon3.png" alt="" />
                         </div>
-                        <span class="btn-title">{{iconTipsList[taskData.child_list[curTaskIndex].label_list[2]]}}</span>
+                        <div class="btn-title">{{iconTipsList[taskData.child_list[curTaskIndex].label_list[2]]}}</div>
                     </div>
                 </div>
 
@@ -1804,9 +1804,8 @@
         align-items: center;
         border: solid to(4) #333;
         border-radius: to(6);
-        height: 38px;
+        height: 40px;
         overflow: hidden;
-        line-height: 1;
         .btn-icon{
             background: #2795F7;
             display: flex;
@@ -1828,6 +1827,9 @@
         .btn-title{
             display: flex;
             align-items: center;
+            justify-content: center;
+            flex: 1;
+            height: 100%;
             padding: 0 to(10);
         }
     }

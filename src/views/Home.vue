@@ -1030,98 +1030,84 @@
             }
         },
         mounted() {
-            if(this.GetUrlParam("qlx_trackid")) localStorage.setItem('trackId', this.GetUrlParam("qlx_trackid"))
-            const is_login = localStorage.getItem('sessionId')
-            if(localStorage.getItem('oldSessionId') && !is_login) localStorage.setItem('sessionId', localStorage.getItem('oldSessionId'));
-            if (is_login === null) {
-                this.$store.commit('LoadingStatus', {isLoading: true})
-                this.$api.post('api/v1/user/autologin', {
-                    qlx_trackid: localStorage.getItem('trackId') || "" //渠道id
-                }).then( res => {
-                    localStorage.setItem('userInfo', JSON.stringify(res.user))
-                    localStorage.setItem('sessionId', res.session_id)
-                    this.$router.go(0)
-                });
-            }else{
-                this.loading = true;
-                // 获取提现模块的高度
-                this.downwarpHeight = this.$refs.scrollerDownwarp.offsetHeight;
-                this.$refs.scrollerDownwarp.addEventListener('scroll', this.cashHandleScroll);
+            this.loading = true;
+            // 获取提现模块的高度
+            this.downwarpHeight = this.$refs.scrollerDownwarp.offsetHeight;
+            this.$refs.scrollerDownwarp.addEventListener('scroll', this.cashHandleScroll);
 
-                // 默认隐藏
-                this.downwarpStyle = 'height: 0;';
+            // 默认隐藏
+            this.downwarpStyle = 'height: 0;';
 
-                // handleScroll为页面滚动的监听回调
-                window.addEventListener('scroll', this.handleScroll);
+            // handleScroll为页面滚动的监听回调
+            window.addEventListener('scroll', this.handleScroll);
 
-                // 监听dom渲染完成
-                this.$nextTick(() => {
-                    // 这里fixedHeaderRoot是吸顶元素的ID
-                    let header = document.getElementById("fixedHeader");
-                    // 这里要得到top的距离和元素自身的高度
-                    this.offsetTop = header.offsetTop;
-                    this.offsetHeight = header.offsetHeight;
-                });
+            // 监听dom渲染完成
+            this.$nextTick(() => {
+                // 这里fixedHeaderRoot是吸顶元素的ID
+                let header = document.getElementById("fixedHeader");
+                // 这里要得到top的距离和元素自身的高度
+                this.offsetTop = header.offsetTop;
+                this.offsetHeight = header.offsetHeight;
+            });
 
-                // 获取任务大厅的任务列表
-                this.$api.post('api/v1/jftask/list', {
-                    session_id: localStorage.getItem('sessionId'), //登录标识
-                    qlx_trackid: localStorage.getItem('trackId') || "", //渠道id
-                    page: 1, //当前页数
-                    page_size: 10, //每页数量
-                    status: -1 //用户任务状态
-                }).then( res => {
-                    this.loading = false;
-                    for(let i in res.dataList){
-                        let colorList = res.dataList[i].color.split(",");
-                        res.dataList[i].main_color = colorList[0];
-                        res.dataList[i].second_color = colorList[1]
-                        res.dataList[i].label_list = res.dataList[i].rights_label
-                    }
-                    this.taskList = res.dataList;
-                });
+            // 获取任务大厅的任务列表
+            this.$api.post('api/v1/jftask/list', {
+                session_id: localStorage.getItem('sessionId'), //登录标识
+                qlx_trackid: localStorage.getItem('trackId') || "", //渠道id
+                page: 1, //当前页数
+                page_size: 10, //每页数量
+                status: -1 //用户任务状态
+            }).then( res => {
+                this.loading = false;
+                for(let i in res.dataList){
+                    let colorList = res.dataList[i].color.split(",");
+                    res.dataList[i].main_color = colorList[0];
+                    res.dataList[i].second_color = colorList[1]
+                    res.dataList[i].label_list = res.dataList[i].rights_label
+                }
+                this.taskList = res.dataList;
+            });
 
-                // 获取进行中的任务列表
-                this.$api.post('api/v1/jftask/list', {
-                    session_id: localStorage.getItem('sessionId'), //登录标识
-                    status: 0 //用户任务状态
-                }).then( res => {
-                    for(let i in res.dataList){
-                        let colorList = res.dataList[i].color.split(",");
-                        res.dataList[i].main_color = colorList[0];
-                        res.dataList[i].second_color = colorList[1]
-                    }
-                    this.ongoingList = res.dataList;
-                });
+            // 获取进行中的任务列表
+            this.$api.post('api/v1/jftask/list', {
+                session_id: localStorage.getItem('sessionId'), //登录标识
+                status: 0 //用户任务状态
+            }).then( res => {
+                for(let i in res.dataList){
+                    let colorList = res.dataList[i].color.split(",");
+                    res.dataList[i].main_color = colorList[0];
+                    res.dataList[i].second_color = colorList[1]
+                }
+                this.ongoingList = res.dataList;
+            });
 
-                // 获取已完成的任务列表
-                this.$api.post('api/v1/jftask/list', {
-                    session_id: localStorage.getItem('sessionId'), //登录标识
-                    page: 1, //当前页数
-                    status: 1 //用户任务状态
-                }).then( res => {
-                    for(let i in res.dataList){
-                        let colorList = res.dataList[i].color.split(",");
-                        res.dataList[i].main_color = colorList[0];
-                        res.dataList[i].second_color = colorList[1]
-                    }
-                    this.completedList = res.dataList
-                });
+            // 获取已完成的任务列表
+            this.$api.post('api/v1/jftask/list', {
+                session_id: localStorage.getItem('sessionId'), //登录标识
+                page: 1, //当前页数
+                status: 1 //用户任务状态
+            }).then( res => {
+                for(let i in res.dataList){
+                    let colorList = res.dataList[i].color.split(",");
+                    res.dataList[i].main_color = colorList[0];
+                    res.dataList[i].second_color = colorList[1]
+                }
+                this.completedList = res.dataList
+            });
 
-                // 获取用户信息
-                this.$api.post('api/v1/user/info', {
-                    session_id: localStorage.getItem('sessionId'), //登录标识
-                }).then( res => {
-                    this.userData = res
-                });
+            // 获取用户信息
+            this.$api.post('api/v1/user/info', {
+                session_id: localStorage.getItem('sessionId'), //登录标识
+            }).then( res => {
+                this.userData = res
+            });
 
-                // 获取用户提现配置
-                this.$api.post('api/v1/user/withdraw-config', {
-                    session_id: localStorage.getItem('sessionId'), //登录标识
-                }).then( res => {
-                    this.cashList = res.amount
-                });
-            }
+            // 获取用户提现配置
+            this.$api.post('api/v1/user/withdraw-config', {
+                session_id: localStorage.getItem('sessionId'), //登录标识
+            }).then( res => {
+                this.cashList = res.amount
+            });
         },
         destroyed(){
             // 移除页面滚动的监听handleScroll
@@ -1136,14 +1122,28 @@
                 this.iconTipsList = res.rights_label
             })
 
-            this.overTimer = setInterval(function(){
-                // 获取用户信息
-                this.$api.post('api/v1/user/info', {
-                    session_id: localStorage.getItem('sessionId'), //登录标识
+            if(this.GetUrlParam("qlx_trackid")) localStorage.setItem('trackId', this.GetUrlParam("qlx_trackid"))
+            const is_login = localStorage.getItem('sessionId')
+            if(localStorage.getItem('oldSessionId') && !is_login) localStorage.setItem('sessionId', localStorage.getItem('oldSessionId'));
+            if (is_login === null) {
+                this.$store.commit('LoadingStatus', {isLoading: true})
+                this.$api.post('api/v1/user/autologin', {
+                    qlx_trackid: localStorage.getItem('trackId') || "" //渠道id
                 }).then( res => {
-                    this.userData = res
+                    localStorage.setItem('userInfo', JSON.stringify(res.user))
+                    localStorage.setItem('sessionId', res.session_id)
+                    this.$router.go(0)
                 });
-            }, 300000)
+            }else{
+                this.overTimer = setInterval(function(){
+                    // 获取用户信息
+                    this.$api.post('api/v1/user/info', {
+                        session_id: localStorage.getItem('sessionId'), //登录标识
+                    }).then( res => {
+                        this.userData = res
+                    });
+                }, 300000)
+            }
         }
     }
 </script>
