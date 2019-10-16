@@ -59,7 +59,9 @@ router.beforeEach((to, from, next) => {
         })
     } else {
         const is_login = localStorage.getItem('sessionId')
-        if (!is_login && to.name === LOGIN_PAGE_NAME) {
+		if(!is_login && to.name === LOGIN_PAGE_NAME && to.params && (to.params.type == "offline" || to.params.type == "session_invalid")){
+			next({query: {qlx_trackid: to.query.qlx_trackid || ""}})
+		}else if (!is_login && to.name === LOGIN_PAGE_NAME) {
             // 没登录跳转到首页
             next({
                 name: HOME_PAGE_NAME,

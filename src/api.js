@@ -35,7 +35,7 @@ service.interceptors.response.use(
                 return response.data.data
             } else if(res.type == "offline" || res.type == "session_invalid"){
                 localStorage.clear()
-                router.push({name: 'login'});
+                router.push({name: 'login', params: {type: res.type}});
                 return false
             }else {
                 Vue.prototype.$toast(res.error);
