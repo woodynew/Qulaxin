@@ -356,6 +356,47 @@
                 this.isEmptyTask = false;
                 this.isShowPopup = true;
             },
+            showShareTask(taskList){
+                //判断是否链接分享单品任务
+                if(this.GetUrlParam("qlx_trackid")){
+                    var trackId = this.GetUrlParam("qlx_trackid");
+                    var trackData = trackId.split('_');
+                    if(trackData.length > 1 && trackData[1] && trackData[1] > 0){
+                        for(var tindex in taskList){
+                            var task = taskList[tindex];
+                            if(task.id == trackData[1]){
+                                if(!localStorage.getItem('back_home') || localStorage.getItem('back_home') != '1'){
+                                    var underway = 0;
+                                    for(var subindex in task.child_list){
+                                        var subTask = task.child_list[subindex];
+                                        if(subTask.user_record_status == 0){
+                                            underway = 1;
+                                            break;
+                                        }
+                                    }
+                                    if(task.user_record_status == -1 || underway == 0){
+                                        this.tapToGrabTask(trackData[1]);
+                                    }else{
+                                        this.$store.commit('LoadingStatus', {isLoading: true, loadingMsg: "加载中..."})
+                                        this.$router.push({name: 'task', params: {id: trackData[1]}});
+                                    }
+                                }else
+                                    localStorage.removeItem('back_home')
+
+                                // if(!localStorage.getItem('share_taskid') || localStorage.getItem('share_taskid') != trackData[1]){
+                                //     localStorage.setItem('share_taskid', trackData[1])
+                                //     if(task.user_record_status == -1){
+                                //         this.tapToGrabTask(trackData[1]);
+                                //     }else{
+                                //         this.$store.commit('LoadingStatus', {isLoading: true, loadingMsg: "加载中..."})
+                                //         this.$router.push({name: 'task', params: {id: trackData[1]}});
+                                //     }
+                                // }
+                            }
+                        }
+                    }
+                }
+            },
             // 抢任务
             tapToGrabTask(id){
                 this.$store.commit('LoadingStatus', {isLoading: true, loadingMsg: "加载中..."})
@@ -1064,6 +1105,8 @@
                         res.dataList[i].label_list = res.dataList[i].rights_label
                     }
                     this.taskList = res.dataList;
+
+                    this.showShareTask(this.taskList);
                 });
 
                 // 获取进行中的任务列表
@@ -1077,6 +1120,8 @@
                         res.dataList[i].second_color = colorList[1]
                     }
                     this.ongoingList = res.dataList;
+
+                    this.showShareTask(this.ongoingList);
                 });
 
                 // 获取已完成的任务列表

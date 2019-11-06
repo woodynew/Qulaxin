@@ -556,6 +556,8 @@
             },
             // 返回首页
             tapToBack(event){
+                localStorage.setItem('back_home', '1')
+
                 event.preventDefault();
                 this.$router.back();
             },
