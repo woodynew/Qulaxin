@@ -81,12 +81,13 @@
                     this.authCodeFocus = true
                     return;
                 }
-                this.$api.post('api/v1/user/phonelogin', {
-                    phone: this.phone,
-                    code: this.authCode,
-                    session_id: localStorage.getItem('sessionId') || "", //登录标识
-                    qlx_trackid: localStorage.getItem('trackId') || "" //渠道id
-                }).then( res => {
+
+                var data = JSON.parse(localStorage.getItem('url_params'))
+                data['phone'] = this.phone;
+                data['code'] = this.authCode;
+                data['session_id'] = localStorage.getItem('sessionId') || "";//登录标识
+                data['qlx_trackid'] = localStorage.getItem('trackId') || "";
+                this.$api.post('api/v1/user/phonelogin', data).then( res => {
                     localStorage.setItem('oldSessionId', localStorage.getItem('sessionId'))
                     this.$toast("登录成功！");
                     localStorage.setItem('userInfo', JSON.stringify(res.user))

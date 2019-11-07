@@ -358,41 +358,51 @@
             },
             showShareTask(taskList){
                 //判断是否链接分享单品任务
-                if(this.GetUrlParam("qlx_trackid")){
+                if(this.GetUrlParam("qlx_trackid") && this.GetUrlParam("task")){
                     var trackId = this.GetUrlParam("qlx_trackid");
+                    var taskno = this.GetUrlParam("task");
                     var trackData = trackId.split('_');
-                    if(trackData.length > 1 && trackData[1] && trackData[1] > 0){
-                        for(var tindex in taskList){
-                            var task = taskList[tindex];
-                            if(task.id == trackData[1]){
-                                if(!localStorage.getItem('back_home') || localStorage.getItem('back_home') != '1'){
-                                    var underway = 0;
-                                    for(var subindex in task.child_list){
-                                        var subTask = task.child_list[subindex];
-                                        if(subTask.user_record_status == 0){
-                                            underway = 1;
-                                            break;
-                                        }
-                                    }
-                                    if(task.user_record_status == -1 || underway == 0){
-                                        this.tapToGrabTask(trackData[1]);
-                                    }else{
-                                        this.$store.commit('LoadingStatus', {isLoading: true, loadingMsg: "加载中..."})
-                                        this.$router.push({name: 'task', params: {id: trackData[1]}});
-                                    }
-                                }else
-                                    localStorage.removeItem('back_home')
 
-                                // if(!localStorage.getItem('share_taskid') || localStorage.getItem('share_taskid') != trackData[1]){
-                                //     localStorage.setItem('share_taskid', trackData[1])
-                                //     if(task.user_record_status == -1){
-                                //         this.tapToGrabTask(trackData[1]);
-                                //     }else{
-                                //         this.$store.commit('LoadingStatus', {isLoading: true, loadingMsg: "加载中..."})
-                                //         this.$router.push({name: 'task', params: {id: trackData[1]}});
-                                //     }
-                                // }
+                    if(trackData.length > 0 && trackData[0] == 'onepro' && taskno != ''){
+                        var usetask;
+                        for(var tindex in taskList){
+                            if(usetask)
+                                break;
+
+                            var task = taskList[tindex];
+                            if(task.code == taskno){
+                                usetask = task;
+                                console.log(task)
+                                break;
+                            }else{
+                                for(var subindex in task.child_list){
+                                    var subTask = task.child_list[subindex];
+                                    if(subTask.code == taskno) {
+                                        usetask = task;
+                                        break;
+                                    }
+                                }
                             }
+                        }
+
+                        if(usetask){
+                            if(!localStorage.getItem('back_home') || localStorage.getItem('back_home') != '1'){
+                                var underway = 0;
+                                for(var subindex in usetask.child_list){
+                                    var subTask = usetask.child_list[subindex];
+                                    if(subTask.user_record_status == 0){
+                                        underway = 1;
+                                        break;
+                                    }
+                                }
+                                if(usetask.user_record_status == -1 || underway == 0){
+                                    this.tapToGrabTask(usetask.id);
+                                }else{
+                                    this.$store.commit('LoadingStatus', {isLoading: true, loadingMsg: "加载中..."})
+                                    this.$router.push({name: 'task', params: {id: usetask.id}});
+                                }
+                            }else
+                                localStorage.removeItem('back_home')
                         }
                     }
                 }
@@ -499,13 +509,13 @@
                     if(this.isData && !this.loading){
                         this.loading = true;
                         // 获取任务大厅的任务列表
-                        this.$api.post('api/v1/jftask/list', {
+                        this.$api.post('api/v1/jftask/list', Object.assign(JSON.parse(localStorage.getItem('url_params')),{
                             session_id: localStorage.getItem('sessionId'), //登录标识
                             qlx_trackid: localStorage.getItem('trackId') || "", //渠道id
                             page: ++this.num, //当前页数
                             page_size: 10, //每页数量
                             status: -1 //用户任务状态
-                        }).then( res => {
+                        })).then( res => {
                             if(res.dataList.length > 0){
                                 this.loading = false;
                                 for(let i in res.dataList){
@@ -514,7 +524,6 @@
                                     res.dataList[i].second_color = colorList[1]
                                     res.dataList[i].label_list = res.dataList[i].rights_label
                                 }
-                                console.log(res.dataList);
                                 this.taskList = this.taskList.concat(res.dataList)
                             } else{
                                 this.loading=false;
@@ -663,11 +672,11 @@
             // 切换已完成的任务
             viewCompletedList(isShow) {
                 // 获取任务列表
-                this.$api.post('api/v1/jftask/list', {
+                this.$api.post('api/v1/jftask/list', Object.assign(JSON.parse(localStorage.getItem('url_params')),{
                     session_id: localStorage.getItem('sessionId'), //登录标识
                     page: 1, //当前页数
                     status: 1 //用户任务状态
-                }).then( res => {
+                })).then( res => {
                     this.showCompletedList = isShow;
                     for(let i in res.dataList){
                         let colorList = res.dataList[i].color.split(",");
@@ -905,10 +914,10 @@
 
                         if(this.showCompletedList){
                             // 获取已完成任务列表
-                            this.$api.post('api/v1/jftask/list', {
+                            this.$api.post('api/v1/jftask/list', Object.assign(JSON.parse(localStorage.getItem('url_params')),{
                                 session_id: localStorage.getItem('sessionId'), //登录标识
                                 status: 1 //用户任务状态
-                            }).then( res => {
+                            })).then( res => {
                                 //加载数据完成，所以状态要回到0。
                                 this.moveState = 0;
                                 for(let i in res.dataList){
@@ -920,13 +929,13 @@
                             });
                         }else{
                             // 获取任务大厅的任务列表
-                            this.$api.post('api/v1/jftask/list', {
+                            this.$api.post('api/v1/jftask/list', Object.assign(JSON.parse(localStorage.getItem('url_params')),{
                                 session_id: localStorage.getItem('sessionId'), //登录标识
                                 qlx_trackid: localStorage.getItem('trackId') || "", //渠道id
                                 page: 1, //当前页数
                                 page_size: 10, //每页数量
                                 status: -1 //用户任务状态
-                            }).then( res => {
+                            })).then( res => {
                                 //加载数据完成，所以状态要回到0。
                                 this.moveState = 0;
                                 for(let i in res.dataList){
@@ -939,10 +948,10 @@
                             });
 
                             // 获取进行中的任务列表
-                            this.$api.post('api/v1/jftask/list', {
+                            this.$api.post('api/v1/jftask/list', Object.assign(JSON.parse(localStorage.getItem('url_params')),{
                                 session_id: localStorage.getItem('sessionId'), //登录标识
                                 status: 0 //用户任务状态
-                            }).then( res => {
+                            })).then( res => {
                                 for(let i in res.dataList){
                                     let colorList = res.dataList[i].color.split(",");
                                     res.dataList[i].main_color = colorList[0];
@@ -952,11 +961,11 @@
                             });
 
                             // 获取已完成的任务列表
-                            this.$api.post('api/v1/jftask/list', {
+                            this.$api.post('api/v1/jftask/list', Object.assign(JSON.parse(localStorage.getItem('url_params')),{
                                 session_id: localStorage.getItem('sessionId'), //登录标识
                                 page: 1, //当前页数
                                 status: 1 //用户任务状态
-                            }).then( res => {
+                            })).then( res => {
                                 for(let i in res.dataList){
                                     let colorList = res.dataList[i].color.split(",");
                                     res.dataList[i].main_color = colorList[0];
@@ -1013,13 +1022,13 @@
                     // 复位
                     this.restSlide();
                     // 获取任务大厅的任务列表
-                    this.$api.post('api/v1/jftask/list', {
+                    this.$api.post('api/v1/jftask/list', Object.assign(JSON.parse(localStorage.getItem('url_params')),{
                         session_id: localStorage.getItem('sessionId'), //登录标识
                         qlx_trackid: localStorage.getItem('trackId') || "", //渠道id
                         page: 1, //当前页数
                         page_size: 10, //每页数量
                         status: -1 //用户任务状态
-                    }).then( res => {
+                    })).then( res => {
                         this.loading = false;
                         for(let i in res.dataList){
                             let colorList = res.dataList[i].color.split(",");
@@ -1031,10 +1040,10 @@
                     });
 
                     // 获取进行中的任务列表
-                    this.$api.post('api/v1/jftask/list', {
+                    this.$api.post('api/v1/jftask/list', Object.assign(JSON.parse(localStorage.getItem('url_params')),{
                         session_id: localStorage.getItem('sessionId'), //登录标识
                         status: 0 //用户任务状态
-                    }).then( res => {
+                    })).then( res => {
                         for(let i in res.dataList){
                             let colorList = res.dataList[i].color.split(",");
                             res.dataList[i].main_color = colorList[0];
@@ -1069,6 +1078,23 @@
                     return "";
                 }
             },
+            GetUrlParamAll() {
+                let params = {};
+
+                let url = document.location.toString();
+                let arrObj = url.split("?");
+                if (arrObj.length > 1) {
+                    let arrPara = arrObj[1].split("&");
+                    let arr;
+                    for (let i = 0; i < arrPara.length; i++) {
+                        arr = arrPara[i].split("=");
+                        if (arr != null && arr.length > 1) {
+                            params[arr[0]] = arr[1];
+                        }
+                    }
+                }
+                return params;
+            },
 
             queryData(){
                 this.loading = true;
@@ -1090,13 +1116,13 @@
                 });
 
                 // 获取任务大厅的任务列表
-                this.$api.post('api/v1/jftask/list', {
+                this.$api.post('api/v1/jftask/list', Object.assign(JSON.parse(localStorage.getItem('url_params')), {
                     session_id: localStorage.getItem('sessionId'), //登录标识
                     qlx_trackid: localStorage.getItem('trackId') || "", //渠道id
                     page: 1, //当前页数
                     page_size: 10, //每页数量
                     status: -1 //用户任务状态
-                }).then( res => {
+                })).then( res => {
                     this.loading = false;
                     for(let i in res.dataList){
                         let colorList = res.dataList[i].color.split(",");
@@ -1110,10 +1136,10 @@
                 });
 
                 // 获取进行中的任务列表
-                this.$api.post('api/v1/jftask/list', {
+                this.$api.post('api/v1/jftask/list', Object.assign(JSON.parse(localStorage.getItem('url_params')),{
                     session_id: localStorage.getItem('sessionId'), //登录标识
                     status: 0 //用户任务状态
-                }).then( res => {
+                })).then( res => {
                     for(let i in res.dataList){
                         let colorList = res.dataList[i].color.split(",");
                         res.dataList[i].main_color = colorList[0];
@@ -1125,11 +1151,11 @@
                 });
 
                 // 获取已完成的任务列表
-                this.$api.post('api/v1/jftask/list', {
+                this.$api.post('api/v1/jftask/list', Object.assign(JSON.parse(localStorage.getItem('url_params')),{
                     session_id: localStorage.getItem('sessionId'), //登录标识
                     page: 1, //当前页数
                     status: 1 //用户任务状态
-                }).then( res => {
+                })).then( res => {
                     for(let i in res.dataList){
                         let colorList = res.dataList[i].color.split(",");
                         res.dataList[i].main_color = colorList[0];
@@ -1164,6 +1190,8 @@
             clearInterval(this.overTimer)
         },
         created() {
+            localStorage.setItem('url_params', JSON.stringify(this.GetUrlParamAll()))
+
             this.$api.post('api/v1/jftask/config', {}).then( res => {
                 this.iconTipsContentList = res.rights_label_desc
                 this.iconTipsList = res.rights_label
@@ -1174,9 +1202,10 @@
             if(localStorage.getItem('oldSessionId') && !is_login) localStorage.setItem('sessionId', localStorage.getItem('oldSessionId'));
             if (is_login === null) {
                 this.$store.commit('LoadingStatus', {isLoading: true})
-                this.$api.post('api/v1/user/autologin', {
-                    qlx_trackid: localStorage.getItem('trackId') || "" //渠道id
-                }).then( res => {
+
+                var data = this.GetUrlParamAll();
+                data['qlx_trackid'] =localStorage.getItem('trackId') || "";
+                this.$api.post('api/v1/user/autologin', data).then( res => {
                     localStorage.setItem('userInfo', JSON.stringify(res.user))
                     localStorage.setItem('sessionId', res.session_id)
                     this.queryData()
