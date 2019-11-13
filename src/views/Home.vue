@@ -110,7 +110,7 @@
                                             <img :src="item.logo" alt="" />
                                             <div class="app-name nowrap">{{item.title}}</div>
                                         </div>
-                                        <div class="app-reward">奖励金<span>{{item.price}}</span>元</div>
+                                        <div class="app-reward"  v-if="item.price > 0">奖励金<span>{{item.price}}</span>元</div>
                                     </div>
                                 </div>
                                 <div class="task-quit flex-item" @click="deleteItem(index)"><img
@@ -147,7 +147,7 @@
                                             <img :src="item.logo" alt="" />
                                             <div class="app-name nowrap">{{item.title}}</div>
                                         </div>
-                                        <div class="app-reward">奖励金<span>{{item.price}}</span>元</div>
+                                        <div class="app-reward" v-if="item.price > 0">奖励金<span>{{item.price}}</span>元</div>
                                     </div>
                                     <div class="task-cont">
                                         <div class="task-desc">任务要求：{{item.desc}}</div>
@@ -181,7 +181,7 @@
                                         <div class="cont-item" :class="{'undone': childItem.user_record_status == -1}" v-for="(childItem, index) in item.child_list">
                                             <div class="cont-head flex-item">
                                                 <div class="task-desc">任务{{index + 1}}：{{childItem.title}}</div>
-                                                <div class="task-reward" :style="childItem.user_record_status != -1 ? 'color: ' + item.main_color : ''">{{childItem.user_record_status == 1 ? "已到账" : (childItem.user_record_status == 0 ? "在路上" : "")}}{{childItem.price}}元{{childItem.user_record_status == -1 ? "奖励金" : ""}}</div>
+                                                <div class="task-reward" :style="childItem.user_record_status != -1 ? 'color: ' + item.main_color : ''" v-if="childItem.price > 0">{{childItem.user_record_status == 1 ? "已到账" : (childItem.user_record_status == 0 ? "在路上" : "")}}{{childItem.price}}元{{childItem.user_record_status == -1 ? "奖励金" : ""}}</div>
                                             </div>
                                             <div class="cont-time">{{childItem.jftask_record ? childItem.jftask_record.submit_time : "未完成此任务"}}</div>
                                         </div>
@@ -372,7 +372,6 @@
                             var task = taskList[tindex];
                             if(task.code == taskno){
                                 usetask = task;
-                                console.log(task)
                                 break;
                             }else{
                                 for(var subindex in task.child_list){
@@ -390,7 +389,7 @@
                                 var underway = 0;
                                 for(var subindex in usetask.child_list){
                                     var subTask = usetask.child_list[subindex];
-                                    if(subTask.user_record_status == 0){
+                                    if(subTask.user_record_status != -1){
                                         underway = 1;
                                         break;
                                     }
@@ -1204,7 +1203,7 @@
                 this.$store.commit('LoadingStatus', {isLoading: true})
 
                 var data = this.GetUrlParamAll();
-                data['qlx_trackid'] =localStorage.getItem('trackId') || "";
+                data['qlx_trackid'] = localStorage.getItem('trackId') || "";
                 this.$api.post('api/v1/user/autologin', data).then( res => {
                     localStorage.setItem('userInfo', JSON.stringify(res.user))
                     localStorage.setItem('sessionId', res.session_id)

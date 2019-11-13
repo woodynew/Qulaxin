@@ -17,10 +17,11 @@
                         <img :src="taskData.logo" alt="">
                         <div class="app-name">{{taskData.title}}</div>
                     </div>
-                    <div class="app-reward" :style="fixedHeadStyle">奖励金<span>{{taskData.price}}</span>元</div>
+                    <div class="app-reward" :style="fixedHeadStyle" v-if="taskData.price > 0">奖励金<span>{{taskData.price}}</span>元</div>
+                    <div class="app-reward" :style="fixedHeadStyle" v-else>官方推广</div>
                 </div>
                 <div class="task-cont">
-                    <div class="task-desc">{{taskData.child_list[curTaskIndex].desc}}<!--可让家人朋友一起完成，拿多次奖励--></div>
+                    <div class="task-desc">{{taskData.child_list[curTaskIndex].duration}}<!--可让家人朋友一起完成，拿多次奖励--></div>
                 </div>
             </div>
         </div>
@@ -38,9 +39,10 @@
 <!--                    'branch-red' : item.user_record_status == 3-->
 
 <!--                    {{item.user_record_status == -1 ? item.price + "元任务" : item.taskStatusName}}-->
-                        {{item.price + "元任务"}}<span v-if="item.user_record_status == 0">...</span>
+                        {{item.price > 0 ? item.price + "元任务" : "任务"+(index+1)}}<span v-if="item.user_record_status == 0"></span>
 <!--                    branchActive == index ? '../assets/images/btn_icon01.png' : '../assets/images/btn_icon02.png'-->
 <!--                    <img :src="branchActive == index ? branchActiveLuckIcon : branchLuckIcon" alt="" v-if="item.user_record_status == -1"/>-->
+                    <img class="circle" :src="branchActive == index ? branchLuckIconIng : branchLuckIcon" alt="" v-if="item.user_record_status == 0"/>
                     <img :src="branchActive == index ? branchActiveLuckIcon : branchLuckIcon" alt="" v-if="item.user_record_status == -1"/>
                     <img :src="branchActive == index ? branchActiveLuckIconOk : branchLuckIconOk" alt="" v-if="item.user_record_status == 1"/>
                     <img :src="branchActive == index ? branchActiveLuckIconFail : branchLuckIconFail" alt="" v-if="item.user_record_status == 3"/>
@@ -80,8 +82,10 @@
             <div class="detail-card" :class="{'bg-gray': taskStatus == -1}">
                 <div class="detail-tips flex-item" @click.stop="switchBranch(curTaskIndex - 1, taskData.child_list[curTaskIndex - 1])" v-if="taskStatus == -1"><img src="../assets/images/arrow.png" alt="" />完成上个任务即可解锁，点击去完成</div>
                 <div class="detail-head flex-item">
-                    <div class="task-left">任务{{curTaskIndex + 1}}： {{taskData.child_list[curTaskIndex].title}}</div>
-<!--                    <div class="task-right" :style="{color: taskData.main_color}">{{taskData.child_list[curTaskIndex].price}}元奖励金</div>-->
+                    <!--<div class="task-left">任务{{curTaskIndex + 1}}： {{taskData.child_list[curTaskIndex].title}}</div>-->
+                    <div class="task-left">任务要求</div>
+
+                    <!--                    <div class="task-right" :style="{color: taskData.main_color}">{{taskData.child_list[curTaskIndex].price}}元奖励金</div>-->
                     <div class="task-icon" @click.stop="showIconTipsPopup(1, taskStatus == -1)" v-if="taskData.child_list[curTaskIndex].label_list[0] == 1">
                         <div class="btn-icon">
                             <img src="../assets/images/icon1.png" alt="" />
@@ -89,25 +93,29 @@
                         <div class="btn-title">{{iconTipsList[taskData.child_list[curTaskIndex].label_list[0]]}}</div>
                     </div>
                 </div>
-                <div class="form-warp">
-                    <div class="form-label" v-if="taskStatus != 2 && taskStatus != 1 && taskStatus != -1">任务须知：</div>
+                <div class="detail-cont">
+                    <p>{{taskData.child_list[curTaskIndex].title}}</p>
+                </div>
+
+                <div class="form-warp" style="margin-top:40px;">
+                    <div class="form-label" v-if="taskStatus != 2 && taskStatus != 1 && taskStatus != -1">任务须知</div>
 <!--                    <div class="form-label" v-if="taskStatus != 2 && taskStatus != 1">任务步骤：</div>-->
                     <div class="form-label" v-if="taskStatus != 0 && taskStatus != 3 && taskStatus != -1"><p>{{taskStatus == 2 ? "小贴士： " : "恭喜您， "}}</p><p>{{taskStatus == 2 ? "下个任务已解锁！关注公众号“趣拉新”可实时接收奖励到账通知" : "恭喜您，任务成功通过审核，奖励已发放。"}}</p></div>
                 </div>
-                <div class="detail-cont" v-if="taskStatus == 0 || taskStatus == 3 || taskStatus == -1" style="color: #D45036">
+                <div class="detail-cont" v-if="taskStatus == 0 || taskStatus == 3 || taskStatus == -1">
                     <p v-for="(item, index) in taskData.child_list[curTaskIndex].notice" :key="index">{{item}}</p>
                 </div>
-                <div class="form-warp" v-if="taskStatus == 0 || taskStatus == 3 || taskStatus == -1">
-                    <div class="form-label">任务简介：</div>
-                </div>
-                <div class="detail-cont" v-if="taskStatus == 0 || taskStatus == 3 || taskStatus == -1">
-                    <template v-for="(item, index) in taskData.child_list[curTaskIndex].text_desc">
-                        <p v-html="item"></p>
-                    </template>
-                </div>
+                <!--<div class="form-warp" v-if="taskStatus == 0 || taskStatus == 3 || taskStatus == -1">-->
+                    <!--<div class="form-label">任务简介</div>-->
+                <!--</div>-->
+                <!--<div class="detail-cont" v-if="taskStatus == 0 || taskStatus == 3 || taskStatus == -1">-->
+                    <!--<template v-for="(item, index) in taskData.child_list[curTaskIndex].text_desc">-->
+                        <!--<p v-html="item"></p>-->
+                    <!--</template>-->
+                <!--</div>-->
 
-                <div v-if="taskStatus == 0 || taskStatus == 3 || taskStatus == -1">
-                    <div class="task-tutorial">图例教程<span>（注意☆号图例）</span>：</div>
+                <div v-if="taskStatus == 0 || taskStatus == 3 || taskStatus == -1" style="margin-top:40px;">
+                    <div class="task-tutorial">任务步骤<span>（注意☆号图例）</span></div>
                     <div class="tutorial-warp flex-item">
                         <div class="tutorial-item" :class="{'tutorial-active' : item.printscreen == 1}" v-for="(item, index) in taskData.step_list" :key="index" @click.stop="tapShowPreviewPopup(index)">
 <!--                            <img :src="item.img" alt="" class="tutorial-img"/>-->
@@ -285,6 +293,7 @@
                 branchActiveLuckIconFail: require('../assets/images/btn_icon03.png'),
                 branchLuckIcon: require('../assets/images/btn_icon02.png'),
                 branchLuckIconOk: require('../assets/images/btn_icon06.png'),
+                branchLuckIconIng: require('../assets/images/btn_icon07.png'),
                 branchLuckIconFail: require('../assets/images/btn_icon04.png'),
                 isShowPopup: false, // 是否显示放弃任务弹层
                 iconTipsPopup: false, // 是否显示提示
@@ -390,12 +399,12 @@
                     this.authCodeFocus = true;
                     return;
                 }
-                this.$api.post('api/v1/user/phonelogin', {
+                this.$api.post('api/v1/user/phonelogin', Object.assign(JSON.parse(localStorage.getItem('url_params')),{
                     phone: this.phone,
                     code: this.authCode,
                     session_id: localStorage.getItem('sessionId') || "", //登录标识
                     qlx_trackid: localStorage.getItem('trackId') || "" //渠道id
-                }).then( res => {
+                })).then( res => {
                     localStorage.setItem('oldSessionId', localStorage.getItem('sessionId'))
                     this.$toast("登录成功！");
                     localStorage.setItem('userInfo', JSON.stringify(res.user))
@@ -1231,6 +1240,11 @@
                 height: to(28);
                 margin-left: to(8);
             }
+            & > img.circle {
+                width: to(28);
+                height: to(28);
+                margin-left: to(8);
+            }
         }
         .branch-item:last-child{
             margin-right: 0;
@@ -1293,7 +1307,7 @@
             align-items: flex-start;
             justify-content: space-between;
             font-weight: bold;
-            margin-bottom: to(40);
+            margin-bottom: to(24);
             padding: 0 to(6);
             .task-title{
                 font-size: to(24);
