@@ -1202,7 +1202,7 @@
             if (is_login === null) {
                 this.$store.commit('LoadingStatus', {isLoading: true})
 
-                var data = this.GetUrlParamAll();
+                var data = JSON.parse(localStorage.getItem('url_params'));
                 data['qlx_trackid'] = localStorage.getItem('trackId') || "";
                 this.$api.post('api/v1/user/autologin', data).then( res => {
                     localStorage.setItem('userInfo', JSON.stringify(res.user))
