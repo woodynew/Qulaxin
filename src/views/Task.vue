@@ -4,7 +4,7 @@
         <div class="task-card" id="fixedHeader" :class="{'header-fixed' : isFixed}" :style="{background: taskData.second_color}">
             <div class="task-item">
                 <div class="task-head flex-item">
-                    <div class="tit-left" :style="{color: taskData.main_color}">任务详情</div>
+                    <div class="tit-left" :style="{color: taskData.main_color}">{{"任务"+(curTaskIndex+1)}}</div>
                     <div class="tit-right">
                         <div class="giveup-task" @click.stop="isShowPopup = true">放弃任务</div>
                         <div class="tit-close flex-item" @click.stop="tapToBack">
@@ -17,7 +17,7 @@
                         <img :src="taskData.logo" alt="">
                         <div class="app-name">{{taskData.title}}</div>
                     </div>
-                    <div class="app-reward" :style="fixedHeadStyle" v-if="taskData.price > 0">奖励金<span>{{taskData.price}}</span>元</div>
+                    <div class="app-reward" :style="fixedHeadStyle" v-if="taskData.price > 0">奖励金<span>{{taskData.child_list[curTaskIndex].price}}</span>元</div>
                     <div class="app-reward" :style="fixedHeadStyle" v-else>官方推广</div>
                 </div>
                 <div class="task-cont">
@@ -39,10 +39,10 @@
 <!--                    'branch-red' : item.user_record_status == 3-->
 
 <!--                    {{item.user_record_status == -1 ? item.price + "元任务" : item.taskStatusName}}-->
-                        {{item.price > 0 ? item.price + "元任务" : "任务"+(index+1)}}<span v-if="item.user_record_status == 0"></span>
+                        {{"任务"+(index+1)}}<span v-if="item.user_record_status == 0"></span>
 <!--                    branchActive == index ? '../assets/images/btn_icon01.png' : '../assets/images/btn_icon02.png'-->
 <!--                    <img :src="branchActive == index ? branchActiveLuckIcon : branchLuckIcon" alt="" v-if="item.user_record_status == -1"/>-->
-                    <img class="circle" :src="branchActive == index ? branchLuckIconIng : branchLuckIcon" alt="" v-if="item.user_record_status == 0"/>
+                    <img class="circle" :src="branchActive == index ? branchActiveLuckIconIng : branchLuckIconIng" alt="" v-if="item.user_record_status == 0"/>
                     <img :src="branchActive == index ? branchActiveLuckIcon : branchLuckIcon" alt="" v-if="item.user_record_status == -1"/>
                     <img :src="branchActive == index ? branchActiveLuckIconOk : branchLuckIconOk" alt="" v-if="item.user_record_status == 1"/>
                     <img :src="branchActive == index ? branchActiveLuckIconFail : branchLuckIconFail" alt="" v-if="item.user_record_status == 3"/>
@@ -147,7 +147,7 @@
 
             <!-- 提交任务板块 -->
             <div class="detail-card" v-if="taskStatus == 0 || taskStatus == 3">
-                <div class="detail-head flex-item flex-compact">
+                <div class="detail-head">
                     <div class="task-title">提交凭证</div>
                     <div class="task-icon" @click.stop="showIconTipsPopup(2, taskStatus == -1)" v-if="taskData.child_list[curTaskIndex].label_list[1] == 2">
                         <div class="btn-icon btn-green">
@@ -199,7 +199,7 @@
             <div class="preview-popup" v-if="isShowPreviewPopup" @touchmove.prevent="maskMove">
                 <div class="preview-head flex-item">
                     <div class="preview-num"><span :style="{'color' : taskData.step_list[swiperIndex - 1].printscreen == 1 ? '#FF8455' : '#FFFFFF'}">{{swiperIndex}}</span>/{{taskData.step_list.length}}</div>
-                    <div>任务{{curTaskIndex + 1}}： {{taskData.child_list[curTaskIndex].title}}</div>
+                    <div>{{taskData.step_list[swiperIndex - 1].desc}}</div>
                 </div>
                 <swiper :options="swiperOption">
                     <swiper-slide v-for="(item, index) in taskData.step_list" :key="index">
@@ -209,7 +209,7 @@
                                 <div :style="{background: 'url(' + item.img + ') center center / auto 100% no-repeat', width: '100%', height: '100%'}"></div>
                             </div>
                             <div class="preview-tips flex-item" v-if="item.printscreen == 1">● 完成此步骤后请<span>“截图”</span>，审核任务时需要提交 ●</div>
-                            <div class="preview-foot">{{taskData.step_list[swiperIndex - 1].desc}}</div>
+                            <div class="preview-foot">任务{{curTaskIndex + 1}}： {{taskData.child_list[curTaskIndex].title}}</div>
                         </div>
                     </swiper-slide>
                     <div class="swiper-pagination" slot="pagination"></div>
@@ -291,9 +291,11 @@
                 branchActiveLuckIcon: require('../assets/images/btn_icon01.png'),
                 branchActiveLuckIconOk: require('../assets/images/btn_icon05.png'),
                 branchActiveLuckIconFail: require('../assets/images/btn_icon03.png'),
+                branchActiveLuckIconIng: require('../assets/images/btn_icon07.png'),
+
                 branchLuckIcon: require('../assets/images/btn_icon02.png'),
                 branchLuckIconOk: require('../assets/images/btn_icon06.png'),
-                branchLuckIconIng: require('../assets/images/btn_icon07.png'),
+                branchLuckIconIng: require('../assets/images/btn_icon08.png'),
                 branchLuckIconFail: require('../assets/images/btn_icon04.png'),
                 isShowPopup: false, // 是否显示放弃任务弹层
                 iconTipsPopup: false, // 是否显示提示

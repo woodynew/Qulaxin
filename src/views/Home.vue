@@ -1189,7 +1189,9 @@
             clearInterval(this.overTimer)
         },
         created() {
-            localStorage.setItem('url_params', JSON.stringify(this.GetUrlParamAll()))
+            var reqParams = this.GetUrlParamAll();
+            if(reqParams)
+                localStorage.setItem('url_params', JSON.stringify(this.GetUrlParamAll()))
 
             this.$api.post('api/v1/jftask/config', {}).then( res => {
                 this.iconTipsContentList = res.rights_label_desc

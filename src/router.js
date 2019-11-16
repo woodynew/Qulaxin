@@ -45,30 +45,48 @@ function isQQ(){
 function isAli(){
     return / Alipay/i.test(navigator.userAgent)
 }
+
+function GetUrlParamAll() {
+    let params = {};
+
+    let url = document.location.toString();
+    let arrObj = url.split("?");
+    if (arrObj.length > 1) {
+        let arrPara = arrObj[1].split("&");
+        let arr;
+        for (let i = 0; i < arrPara.length; i++) {
+            arr = arrPara[i].split("=");
+            if (arr != null && arr.length > 1) {
+                params[arr[0]] = arr[1];
+            }
+        }
+    }
+    return params;
+}
 router.beforeEach((to, from, next) => {
     if(to.query.qlx_trackid) localStorage.setItem('trackId', to.query.qlx_trackid);
     if ((isWechat() || isQQ() || isAli()) && to.name !== ERROR_PAGE_NAME) {
         next({
             name: ERROR_PAGE_NAME, // 跳转到错误页
-            query: {qlx_trackid: to.query.qlx_trackid || ""}
+            query: to.query
         })
     } else if (!isWechat() && !isQQ() && !isAli() && to.name === ERROR_PAGE_NAME) {
         next({
             name: HOME_PAGE_NAME,
-            query: {qlx_trackid: to.query.qlx_trackid || ""}
+            query: to.query
         })
     } else {
         const is_login = localStorage.getItem('sessionId')
 		if(!is_login && to.name === LOGIN_PAGE_NAME && to.params && (to.params.type == "offline" || to.params.type == "session_invalid")){
-			next({query: {qlx_trackid: to.query.qlx_trackid || ""}})
+			next({query: to.query})
 		}else if (!is_login && to.name === LOGIN_PAGE_NAME) {
             // 没登录跳转到首页
             next({
                 name: HOME_PAGE_NAME,
-                query: {qlx_trackid: to.query.qlx_trackid || ""}
+                query: to.query
             })
         }else{
-            next({query: {qlx_trackid: to.query.qlx_trackid || ""}})
+            next({query: to.query})
         }
     }
 });
