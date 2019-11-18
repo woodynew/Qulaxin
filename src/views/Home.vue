@@ -289,6 +289,7 @@
                 downwarpStyle: '',
                 downwarpShow: 'opacity: 0;',
                 isEmptyTask: true, //是否显示没抢到任务提示 为false则显示退出登录
+                isShowAbandon: true, //是否显示放弃
                 isShowWithdraw: false,
                 isShowPopup: false, //是否显示任务弹层
                 iconTipsPopup: false, // 是否显示提示
@@ -327,7 +328,7 @@
                 lastTime: 0,
 
                 topFixedStyle: '',
-                oldScrollTop: 0
+                oldScrollTop: 0,
             }
         },
         watch: {
@@ -786,7 +787,7 @@
                         }
                     }
                 }else{
-                    if(thatElement.className == "task-item"){
+                    if(thatElement.className == "task-item" && this.isShowAbandon){
                         // 左右滑动时禁用页面滚动条
                         // e.preventDefault();
                         // 二次及以上次数滚动（间歇性滚动）时间和路程重置计算，0.05是间歇性滚动的停顿位移和时间比
@@ -1190,8 +1191,16 @@
         },
         created() {
             var reqParams = this.GetUrlParamAll();
-            if(reqParams)
-                localStorage.setItem('url_params', JSON.stringify(this.GetUrlParamAll()))
+            if(reqParams && reqParams.cid){
+                localStorage.setItem('url_params', JSON.stringify(reqParams))
+            }
+
+            if(localStorage.getItem('url_params')){
+                var url_params = JSON.parse(localStorage.getItem('url_params'));
+                if(url_params && url_params.task && url_params.qlx_trackid && url_params.qlx_trackid == 'onepro')
+                    this.isShowAbandon = false;
+            }else
+                localStorage.setItem('url_params', JSON.stringify(reqParams))
 
             this.$api.post('api/v1/jftask/config', {}).then( res => {
                 this.iconTipsContentList = res.rights_label_desc

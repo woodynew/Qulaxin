@@ -6,7 +6,7 @@
                 <div class="task-head flex-item">
                     <div class="tit-left" :style="{color: taskData.main_color}">{{"任务"+(curTaskIndex+1)}}</div>
                     <div class="tit-right">
-                        <div class="giveup-task" @click.stop="isShowPopup = true">放弃任务</div>
+                        <div class="giveup-task" @click.stop="isShowPopup = true" v-if="isShowAbandon">放弃任务</div>
                         <div class="tit-close flex-item" @click.stop="tapToBack">
                             <img src="../assets/images/close_detail.png" alt=""/>
                         </div>
@@ -51,9 +51,9 @@
 
             <!-- 任务失败板块 -->
             <div class="detail-card" v-if="taskStatus == 3">
-                <div class="detail-head flex-item">
-                    <div class="task-left">{{taskData.child_list[curTaskIndex].title}}</div>
-                </div>
+                <!--<div class="detail-head flex-item">-->
+                    <!--<div class="task-left">{{taskData.child_list[curTaskIndex].title}}</div>-->
+                <!--</div>-->
                 <div class="form-warp">
                     <div class="form-label"><p>很抱歉，</p><p>您提交的资料未通过审核，任务失败了… </p></div>
                 </div>
@@ -81,7 +81,7 @@
             <!-- 任务描述板块 -->
             <div class="detail-card" :class="{'bg-gray': taskStatus == -1}">
                 <div class="detail-tips flex-item" @click.stop="switchBranch(curTaskIndex - 1, taskData.child_list[curTaskIndex - 1])" v-if="taskStatus == -1"><img src="../assets/images/arrow.png" alt="" />完成上个任务即可解锁，点击去完成</div>
-                <div class="detail-head flex-item">
+                <div class="detail-head flex-item" v-if="taskStatus != 2 && taskStatus != 1 && taskStatus != -1">
                     <!--<div class="task-left">任务{{curTaskIndex + 1}}： {{taskData.child_list[curTaskIndex].title}}</div>-->
                     <div class="task-left">任务要求</div>
 
@@ -93,11 +93,11 @@
                         <div class="btn-title">{{iconTipsList[taskData.child_list[curTaskIndex].label_list[0]]}}</div>
                     </div>
                 </div>
-                <div class="detail-cont">
+                <div class="detail-cont" v-if="taskStatus != 2 && taskStatus != 1 && taskStatus != -1"  style="margin-bottom:40px;">
                     <p>{{taskData.child_list[curTaskIndex].title}}</p>
                 </div>
 
-                <div class="form-warp" style="margin-top:40px;">
+                <div class="form-warp">
                     <div class="form-label" v-if="taskStatus != 2 && taskStatus != 1 && taskStatus != -1">任务须知</div>
 <!--                    <div class="form-label" v-if="taskStatus != 2 && taskStatus != 1">任务步骤：</div>-->
                     <div class="form-label" v-if="taskStatus != 0 && taskStatus != 3 && taskStatus != -1"><p>{{taskStatus == 2 ? "小贴士： " : "恭喜您， "}}</p><p>{{taskStatus == 2 ? "下个任务已解锁！关注公众号“趣拉新”可实时接收奖励到账通知" : "恭喜您，任务成功通过审核，奖励已发放。"}}</p></div>
@@ -297,6 +297,7 @@
                 branchLuckIconOk: require('../assets/images/btn_icon06.png'),
                 branchLuckIconIng: require('../assets/images/btn_icon08.png'),
                 branchLuckIconFail: require('../assets/images/btn_icon04.png'),
+                isShowAbandon: true, // 是否显示放弃任务
                 isShowPopup: false, // 是否显示放弃任务弹层
                 iconTipsPopup: false, // 是否显示提示
                 iconTipsTitle: '', // 提示标题
@@ -561,6 +562,8 @@
                     session_id: localStorage.getItem('sessionId'), //登录标识
                     task_id: this.$route.params.id, //任务ID
                 }).then( res => {
+                    localStorage.setItem('back_home', '1')
+
                     this.$router.back();
                 })
 
@@ -931,6 +934,10 @@
             clearInterval(this.overTimer)
         },
         created() {
+            var reqParams = JSON.parse(localStorage.getItem('url_params'));
+            if(reqParams && reqParams.task && reqParams.qlx_trackid && reqParams.qlx_trackid == 'onepro')
+                this.isShowAbandon = false;
+
             this.$api.post('api/v1/jftask/config', {}).then( res => {
                 this.iconTipsContentList = res.rights_label_desc
                 this.iconTipsList = res.rights_label
