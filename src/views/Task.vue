@@ -100,7 +100,7 @@
                 <div class="form-warp">
                     <div class="form-label" v-if="taskStatus != 2 && taskStatus != 1 && taskStatus != -1">任务须知</div>
 <!--                    <div class="form-label" v-if="taskStatus != 2 && taskStatus != 1">任务步骤：</div>-->
-                    <div class="form-label" v-if="taskStatus != 0 && taskStatus != 3 && taskStatus != -1"><p>{{taskStatus == 2 ? "小贴士： " : "恭喜您， "}}</p><p>{{taskStatus == 2 ? "下个任务已解锁！关注公众号“趣拉新”可实时接收奖励到账通知" : "恭喜您，任务成功通过审核，奖励已发放。"}}</p></div>
+                    <div class="form-label" v-if="taskStatus != 0 && taskStatus != 3 && taskStatus != -1"><p>{{taskStatus == 2 ? "小贴士： " : "恭喜您， "}}</p><p>{{taskStatus == 2 ? "根据任务步骤来逐步收集任务资料，可以极大提升成功率" : "恭喜您，任务成功通过审核，奖励已发放。"}}</p></div>
                 </div>
                 <div class="detail-cont" v-if="taskStatus == 0 || taskStatus == 3 || taskStatus == -1">
                     <p v-for="(item, index) in taskData.child_list[curTaskIndex].notice" :key="index">{{item}}</p>
@@ -136,7 +136,7 @@
                             <div class="result-title">审核中...</div>
                             <div class="result-desc">
                                 <p>您的资料已进入风控系统</p>
-                                <p>预计2～6小时出结果</p>
+                                <p>预计10分钟内出结果</p>
                             </div>
                         </div>
                         <img src="../assets/images/task_over.png" class="over-img" alt="" v-if="taskStatus == 1"/>
