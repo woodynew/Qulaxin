@@ -17,7 +17,7 @@
                         <img :src="taskData.logo" alt="">
                         <div class="app-name">{{taskData.title}}</div>
                     </div>
-                    <div class="app-reward" :style="fixedHeadStyle" v-if="taskData.price > 0">奖励金<span>{{taskData.child_list[curTaskIndex].price}}</span>元</div>
+                    <div class="app-reward" :style="fixedHeadStyle" v-if="taskData.child_list[curTaskIndex].price > 0">奖励金<span>{{taskData.child_list[curTaskIndex].price}}</span>元</div>
                     <div class="app-reward" :style="fixedHeadStyle" v-else>官方推广</div>
                 </div>
                 <div class="task-cont">
