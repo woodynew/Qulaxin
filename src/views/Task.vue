@@ -21,7 +21,7 @@
                     <div class="app-reward" :style="fixedHeadStyle" v-else>官方推广</div>
                 </div>
                 <div class="task-cont">
-                    <div class="task-desc">{{taskData.child_list[curTaskIndex].duration}}<!--可让家人朋友一起完成，拿多次奖励--></div>
+                    <div class="task-desc">{{taskData.child_list[curTaskIndex].desc}}<!--可让家人朋友一起完成，拿多次奖励--></div>
                 </div>
             </div>
         </div>

@@ -150,7 +150,7 @@
                                         <div class="app-reward" v-if="item.price > 0">奖励金<span>{{item.price}}</span>元</div>
                                     </div>
                                     <div class="task-cont">
-                                        <div class="task-desc">任务要求：{{item.desc}}</div>
+                                        <div class="task-desc">任务要求：{{item.child_list.length > 0 ? item.child_list[0].title : ''}}</div>
                                         <div class="task-desc">任务时长：{{item.duration}}</div>
                                         <div class="task-extra" v-if="item.wb_desc[0]">额外福利：{{item.wb_desc[0]}}</div>
                                     </div>
