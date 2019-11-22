@@ -27,6 +27,9 @@ const router = new Router({
             path: '/error',
             name: 'error',
             component: Error,
+            meta: {
+                title: '请用浏览器进行访问'
+            }
         }
     ]
 });
@@ -64,6 +67,12 @@ function GetUrlParamAll() {
     return params;
 }
 router.beforeEach((to, from, next) => {
+    /* 路由发生变化修改页面title */
+    if (to.meta.title) {
+        document.title = to.meta.title;
+    } else
+        document.title = '趣拉新';
+
     if(to.query.qlx_trackid) localStorage.setItem('trackId', to.query.qlx_trackid);
     if ((isWechat() || isQQ() || isAli()) && to.name !== ERROR_PAGE_NAME) {
         next({
