@@ -81,7 +81,7 @@
             <!-- 任务描述板块 -->
             <div class="detail-card" :class="{'bg-gray': taskStatus == -1}">
                 <div class="detail-tips flex-item" @click.stop="switchBranch(curTaskIndex - 1, taskData.child_list[curTaskIndex - 1])" v-if="taskStatus == -1"><img src="../assets/images/arrow.png" alt="" />完成上个任务即可解锁，点击去完成</div>
-                <div class="detail-head flex-item" v-if="taskStatus != 2 && taskStatus != 1 && taskStatus != -1">
+                <div class="detail-head flex-item" v-if="taskStatus != 2 && taskStatus != 1">
                     <!--<div class="task-left">任务{{curTaskIndex + 1}}： {{taskData.child_list[curTaskIndex].title}}</div>-->
                     <div class="task-left">任务要求</div>
 
@@ -93,12 +93,12 @@
                         <div class="btn-title">{{iconTipsList[taskData.child_list[curTaskIndex].label_list[0]]}}</div>
                     </div>
                 </div>
-                <div class="detail-cont" v-if="taskStatus != 2 && taskStatus != 1 && taskStatus != -1"  style="margin-bottom:40px;">
+                <div class="detail-cont" v-if="taskStatus != 2 && taskStatus != 1"  style="margin-bottom:40px;">
                     <p>{{taskData.child_list[curTaskIndex].title}}</p>
                 </div>
 
                 <div class="form-warp">
-                    <div class="form-label" v-if="taskStatus != 2 && taskStatus != 1 && taskStatus != -1">任务须知</div>
+                    <div class="form-label" v-if="taskStatus != 2 && taskStatus != 1">任务须知</div>
 <!--                    <div class="form-label" v-if="taskStatus != 2 && taskStatus != 1">任务步骤：</div>-->
                     <div class="form-label" v-if="taskStatus != 0 && taskStatus != 3 && taskStatus != -1"><p>{{taskStatus == 2 ? "小贴士： " : "恭喜您， "}}</p><p>{{taskStatus == 2 ? "根据任务步骤来逐步收集任务资料，可以极大提升成功率" : "恭喜您，任务成功通过审核，奖励已发放。"}}</p></div>
                 </div>

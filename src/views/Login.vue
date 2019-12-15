@@ -65,7 +65,10 @@
                 // this.$api.post('api/v1/user/autologin', {}).then( res => {
                 //     localStorage.setItem('userInfo', JSON.stringify(res.user))
                 //     localStorage.setItem('sessionId', res.session_id)
-                this.$router.push({name: 'home'});
+
+                var reqParams = this.GetUrlParamAll();
+
+                this.$router.push({name: 'home',query:reqParams});
                 // });
             },
 
@@ -73,12 +76,12 @@
             tapToLogin(){
                 if(!this.phone){
                     this.$toast("请输入手机号");
-                    this.phoneFocus = true
+                    this.phoneFocus = true;
                     return;
                 }
                 if(!this.authCode){
                     this.$toast("请输入验证码");
-                    this.authCodeFocus = true
+                    this.authCodeFocus = true;
                     return;
                 }
 
@@ -92,9 +95,30 @@
                     this.$toast("登录成功！");
                     localStorage.setItem('userInfo', JSON.stringify(res.user))
                     localStorage.setItem('sessionId', res.session_id)
-                    this.$router.push({name: 'home'});
+
+                    var reqParams = this.GetUrlParamAll();
+
+                    this.$router.push({name: 'home',query:reqParams});
                 });
-            }
+            },
+
+            GetUrlParamAll() {
+                let params = {};
+
+                let url = document.location.toString();
+                let arrObj = url.split("?");
+                if (arrObj.length > 1) {
+                    let arrPara = arrObj[1].split("&");
+                    let arr;
+                    for (let i = 0; i < arrPara.length; i++) {
+                        arr = arrPara[i].split("=");
+                        if (arr != null && arr.length > 1) {
+                            params[arr[0]] = arr[1];
+                        }
+                    }
+                }
+                return params;
+            },
         },
         mounted() {
 

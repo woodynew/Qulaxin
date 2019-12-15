@@ -1,7 +1,7 @@
 <template>
     <div class="main" @touchmove.prevent="maskMove">
-        <!--<img src="../../assets/images/logo.png" alt="" class="logo" />-->
-        <img src="" alt="" class="logo" />
+        <img src="../../assets/images/logo.png" alt="" class="logo" style="opacity: 0"/>
+        <!--<img src="" alt="" class="logo" />-->
 
         <div class="task-card tips-card">
             <div class="tips-img"></div>
