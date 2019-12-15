@@ -100,7 +100,7 @@
                 <div class="form-warp">
                     <div class="form-label" v-if="taskStatus != 2 && taskStatus != 1">任务须知</div>
 <!--                    <div class="form-label" v-if="taskStatus != 2 && taskStatus != 1">任务步骤：</div>-->
-                    <div class="form-label" v-if="taskStatus != 0 && taskStatus != 3 && taskStatus != -1"><p>{{taskStatus == 2 ? "小贴士： " : "恭喜您， "}}</p><p>{{taskStatus == 2 ? "根据任务步骤来逐步收集任务资料，可以极大提升成功率" : "恭喜您，任务成功通过审核，奖励已发放。"}}</p></div>
+                    <div class="form-label" v-if="taskStatus != 0 && taskStatus != 3 && taskStatus != -1"><p>{{taskStatus == 2 ? "小贴士： " : "恭喜您， "}}</p><p>{{taskStatus == 2 ? "每个任务只能做一次，重复使用任务凭证，会被系统拉黑喔" : "恭喜您，任务成功通过审核，奖励已发放。"}}</p></div>
                 </div>
                 <div class="detail-cont" v-if="taskStatus == 0 || taskStatus == 3 || taskStatus == -1">
                     <p v-for="(item, index) in taskData.child_list[curTaskIndex].notice" :key="index">{{item}}</p>

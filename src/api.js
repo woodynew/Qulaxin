@@ -23,6 +23,24 @@ service.interceptors.request.use(
     }
 )
 
+function GetUrlParamAll() {
+    let params = {};
+
+    let url = document.location.toString();
+    let arrObj = url.split("?");
+    if (arrObj.length > 1) {
+        let arrPara = arrObj[1].split("&");
+        let arr;
+        for (let i = 0; i < arrPara.length; i++) {
+            arr = arrPara[i].split("=");
+            if (arr != null && arr.length > 1) {
+                params[arr[0]] = arr[1];
+            }
+        }
+    }
+    return params;
+}
+
 // response 拦截器
 service.interceptors.response.use(
     response => {
@@ -35,6 +53,10 @@ service.interceptors.response.use(
                 return response.data.data
             } else if(res.type == "offline" || res.type == "session_invalid"){
                 localStorage.clear()
+
+                var reqParams = this.GetUrlParamAll();
+                localStorage.setItem('url_params', JSON.stringify(reqParams))
+
                 router.push({name: 'login', params: {type: res.type}});
                 return false
             }else {
