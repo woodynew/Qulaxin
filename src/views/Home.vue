@@ -63,7 +63,7 @@
                                         </div>
                                         <div class="cash-log-bottom flex-item">
                                             <div class="nowrap">{{item.alipay_account}}</div>
-                                            <div class="cash-log-time">{{item.dispose_time}}</div>
+                                            <div class="cash-log-time" :class="item.status == 2 ? 'color-red' : ''">{{item.status == 2 ? item.remark : item.dispose_time}}</div>
                                         </div>
                                     </div>
                                     <div class="loading-box" v-if="cashLoading">
@@ -113,7 +113,7 @@
                                         <div class="app-reward"  v-if="item.price > 0">奖励金<span>{{item.price}}</span>元</div>
                                     </div>
                                 </div>
-                                <div class="task-quit flex-item" @click="deleteItem(index)"><img
+                                <div class="task-quit flex-item" @click="deleteItem(index)" v-if="isShowAbandon"><img
                                         src="../assets/images/quit.png" alt=""/>放弃
                                 </div>
                             </div>
@@ -616,7 +616,7 @@
             },
             // 防止蒙版穿透
             maskMove(){
-              return false
+                return false
             },
             // 显示提示
             showIconTipsPopup(type){
@@ -1888,7 +1888,7 @@
     @keyframes loading-spin{0%{transform: rotate(0);} 100%{transform: rotate(360deg);}}
 
     .color-gray{color: #BBBBBB}
-    .color-red{color: #D45036}
+    .color-red{color: #D45036 !important;}
 
     .task-icon{
         margin-left: to(24);

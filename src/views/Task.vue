@@ -453,11 +453,11 @@
             },
             // 上传图片
             changeImage(event,index){
-                if(localStorage.getItem('userInfo') && !JSON.parse(localStorage.getItem('userInfo')).phone){
-                    this.$toast.center("请先登录");
-                    this.showLogin = true;
-                    return false
-                }
+                // if(localStorage.getItem('userInfo') && !JSON.parse(localStorage.getItem('userInfo')).phone){
+                //     this.$toast.center("请先登录");
+                //     this.showLogin = true;
+                //     return false
+                // }
                 this.$store.commit('LoadingStatus', {isLoading: true, loadingMsg: "上传中..."})
                 // 通过DOM取文件数据
                 let fileData = event.target.files[0];
@@ -605,11 +605,11 @@
             },
             // 开始任务
             jumpTaskUrl(){
-                if(localStorage.getItem('userInfo') && !JSON.parse(localStorage.getItem('userInfo')).phone){
-                    this.$toast.center("请先登录");
-                    this.showLogin = true;
-                    return false
-                }
+                // if(localStorage.getItem('userInfo') && !JSON.parse(localStorage.getItem('userInfo')).phone){
+                //     this.$toast.center("请先登录");
+                //     this.showLogin = true;
+                //     return false
+                // }
                 this.$api.post('api/v1/jftask/start', {
                     session_id: localStorage.getItem('sessionId'), //登录标识
                     record_id: this.recordId //记录ID
