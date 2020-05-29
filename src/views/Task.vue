@@ -7,7 +7,7 @@
                     <div class="tit-left" :style="{color: taskData.main_color}">{{"任务"+(curTaskIndex+1)}}</div>
                     <div class="tit-right">
                         <div class="giveup-task" @click.stop="isShowPopup = true" v-if="isShowAbandon">放弃任务</div>
-                        <div class="tit-close flex-item" @click.stop="tapToBack">
+                        <div class="tit-close flex-item" @click.stop="tapToBack" v-if="isShowClose">
                             <img src="../assets/images/close_detail.png" alt=""/>
                         </div>
                     </div>
@@ -297,6 +297,7 @@
                 branchLuckIconOk: require('../assets/images/btn_icon06.png'),
                 branchLuckIconIng: require('../assets/images/btn_icon08.png'),
                 branchLuckIconFail: require('../assets/images/btn_icon04.png'),
+                isShowClose: true, // 是否显示关闭按钮X
                 isShowAbandon: true, // 是否显示放弃任务
                 isShowPopup: false, // 是否显示放弃任务弹层
                 iconTipsPopup: false, // 是否显示提示
@@ -935,8 +936,10 @@
         },
         created() {
             var reqParams = JSON.parse(localStorage.getItem('url_params'));
-            if(reqParams && reqParams.task && reqParams.qlx_trackid && reqParams.qlx_trackid == 'onepro')
+            if(reqParams && reqParams.task && reqParams.qlx_trackid && reqParams.qlx_trackid == 'onepro'){
                 this.isShowAbandon = false;
+                this.isShowClose = false;
+            }
 
             this.$api.post('api/v1/jftask/config', {}).then( res => {
                 this.iconTipsContentList = res.rights_label_desc
