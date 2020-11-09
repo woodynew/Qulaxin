@@ -6,7 +6,7 @@
          @touchmove="touchmove"
          @touchend="refreshEnd">
         <div class="main-scroller-warp">
-            <div class="page-head" id="fixedHeader" @touchend="scrollTouchEnd" :class="{'header-fixed' : isFixed}" :style="topFixedStyle">
+            <div class="page-head" id="fixedHeader" @touchend="scrollTouchEnd" :class="{'header-fixed' : isFixed}" :style="topFixedStyle" v-if="!isCPL">
                 <div class="head-warp">
                     <div :style="fixedHeadStyle">
                         <div class="head-info flex-item">
@@ -124,7 +124,7 @@
                         <div class="warp-head flex-item">
                             <div class="warp-tit" :style="warpTitSmall">任务大厅</div>
                             <div class="task-completed" @click.stop="viewCompletedList(true)" v-if="completedList.length > 0 && ongoingList.length == 0">查看完成的任务<span>！</span></div>
-                            <img src="../assets/images/logo_m.png" alt="" class="warp-logo" v-else/>
+                            <img src="../assets/images/logo_m.png" alt="" class="warp-logo" v-else-if="!isCPL"/>
                         </div>
                         <div class="task-list">
                             <div class="task-card" :style="{boxShadow: '0.26667rem 0.26667rem 0' + item.second_color}" v-for="(item, index) in taskList" :key="index" @click.stop="tapToGrabTask(item.id)">
@@ -272,6 +272,7 @@
                 cashMoveState: 0,
                 cashLoading: false,
                 isCashData: true,
+                isCPL: false,
 
                 userData: {},
                 // 任务大厅
@@ -1202,6 +1203,13 @@
             }else
                 localStorage.setItem('url_params', JSON.stringify(reqParams))
 
+            var data = JSON.parse(localStorage.getItem('url_params'));
+            console.log(reqParams)
+            if(reqParams.cpl == '1' || data.cpl == '1'){
+                this.isCPL = true;
+                // localStorage.removeItem('sessionId')
+            }
+
             this.$api.post('api/v1/jftask/config', {}).then( res => {
                 this.iconTipsContentList = res.rights_label_desc
                 this.iconTipsList = res.rights_label
@@ -1215,6 +1223,10 @@
 
                 var data = JSON.parse(localStorage.getItem('url_params'));
                 data['qlx_trackid'] = localStorage.getItem('trackId') || "";
+
+                if(reqParams.cpl == '1' || data.cpl == '1') {
+                    data = Object.assign(data, this.GetUrlParamAll())
+                }
                 this.$api.post('api/v1/user/autologin', data).then( res => {
                     localStorage.setItem('userInfo', JSON.stringify(res.user))
                     localStorage.setItem('sessionId', res.session_id)

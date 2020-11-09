@@ -640,10 +640,13 @@
                     this.$toast.center("请按教程开始任务");
                     return false
                 }
-                if(localStorage.getItem('userInfo') && !JSON.parse(localStorage.getItem('userInfo')).phone){
-                    this.$toast.center("请先登录");
-                    this.showLogin = true;
-                    return false
+                if(localStorage.getItem('userInfo')){
+                    var userInfo = JSON.parse(localStorage.getItem('userInfo'))
+                    if(userInfo.source != 'cpl' && !userInfo.phone){
+                        this.$toast.center("请先登录");
+                        this.showLogin = true;
+                        return false
+                    }
                 }
                 let imgList = [];
                 for (let i in this.uploadList){
