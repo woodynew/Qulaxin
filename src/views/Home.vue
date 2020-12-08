@@ -1217,6 +1217,7 @@
 
             if(this.GetUrlParam("qlx_trackid")) localStorage.setItem('trackId', this.GetUrlParam("qlx_trackid"))
             const is_login = localStorage.getItem('sessionId')
+
             if(localStorage.getItem('oldSessionId') && !is_login) localStorage.setItem('sessionId', localStorage.getItem('oldSessionId'));
             if (is_login === null) {
                 this.$store.commit('LoadingStatus', {isLoading: true})
