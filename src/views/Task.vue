@@ -136,7 +136,7 @@
                             <div class="result-title">审核中...</div>
                             <div class="result-desc">
                                 <p>您的资料已进入风控系统</p>
-                                <p>预计10分钟内出结果</p>
+                                <p>预计1个工作日内出结果</p>
                             </div>
                         </div>
                         <img src="../assets/images/task_over.png" class="over-img" alt="" v-if="taskStatus == 1"/>
@@ -169,10 +169,10 @@
                 </div>
                 <div class="tutorial-warp flex-item" v-if="uploadList.length > 0">
                     <div class="upload-item" v-for="(item, index) in uploadList" :key="index">
-                        <label :for="item.id" class="upload-img flex-item">
+                        <label :for="item.id" class="upload-img flex-item" @click="changeImageBefore()" >
                             <img src="../assets/images/upload.png" alt="" v-if="!item.imgUrl"/>
                             <div :style="{background: 'url(' + item.imgUrl + ') center center / cover no-repeat'}" class="upload-data" v-else></div>
-                            <input type="file" class="upload-input" :id="item.id" @change.stop="changeImage($event,index)" ref="inputer" accept="image/*"/>
+                            <input v-if="showUploadFile" type="file" class="upload-input" :id="item.id" @change.stop="changeImage($event,index)" ref="inputer" accept="image/*"/>
                         </label>
                         <div class="upload-title">{{item.title}}</div>
                     </div>
@@ -358,6 +358,8 @@
                 authCodeFocus: false, //自动聚焦到验证码输入框
                 showLogin: false, //是否显示快捷登录
                 showStartPopup: false, //是否显示开始任务弹窗
+				
+				showUploadFile: false,
             }
         },
         computed: {},
@@ -414,6 +416,7 @@
                     localStorage.setItem('userInfo', JSON.stringify(res.user))
                     localStorage.setItem('sessionId', res.session_id)
                     this.showLogin = false;
+					this.showUploadFile = true;
                     this.queryData().then(() => {
                         //领取资格allow_take  1允许 2不允许
                         if(this.taskData.child_list[this.curTaskIndex].user_record_status == -1 && this.taskData.child_list[this.curTaskIndex].allow_take == 1){
@@ -440,6 +443,10 @@
             // 显示提示
             showIconTipsPopup(type, isDisable){
                 if(isDisable) return false
+				
+				this.isShowPopup = false;
+				this.showStartPopup = false;
+				
                 this.iconTipsTitle = this.iconTipsList[type]
                 this.iconTipsContent = this.iconTipsContentList[type]
                 this.iconTipsPopup = true
@@ -452,6 +459,22 @@
                 this.isFixed = scrollTop > 100;
                 this.fixedHeadStyle = 'opacity: ' + (scrollTop < 100 ? (1 - scrollTop / 100) : 0) + ';';
             },
+			changeImageBefore(){
+				if(localStorage.getItem('startTask_' + this.taskId) === 'false'){
+				    this.$toast.center("请按教程开始任务");
+				    return false
+				}
+				if(localStorage.getItem('userInfo')){
+				    var userInfo = JSON.parse(localStorage.getItem('userInfo'))
+				    if(userInfo.source != 'cpl' && !userInfo.phone){
+				        this.$toast.center("请先登录");
+				        this.showLogin = true;
+				        return false
+				    }
+				}
+				
+				this.showUploadFile = true
+			},
             // 上传图片
             changeImage(event,index){
                 // if(localStorage.getItem('userInfo') && !JSON.parse(localStorage.getItem('userInfo')).phone){
@@ -629,6 +652,7 @@
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a)
+				
             },
             // 文本框输入
             onInputData(index, event){
