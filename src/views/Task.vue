@@ -33,7 +33,8 @@
                      v-for="(item, index) in taskData.child_list"
                      :key="index"
                      :class="{'branch-active' : branchActive == index,
-                    'branch-gray' : item.user_record_status == -1}">
+                    'branch-gray' : item.user_record_status == -1}"
+					:style="{background: taskData.main_color,'box-shadow': '1.3333vw 1.3333vw 0 '+taskData.main_color+' !important'}">
 <!--                    'branch-green' : item.user_record_status == 1,-->
 <!--                    'branch-blue' : item.user_record_status == 2,-->
 <!--                    'branch-red' : item.user_record_status == 3-->
@@ -115,14 +116,14 @@
                 <!--</div>-->
 
                 <div v-if="taskStatus == 0 || taskStatus == 3 || taskStatus == -1" style="margin-top:40px;">
-                    <div class="task-tutorial">任务步骤<span>（注意☆号图例）</span></div>
+                    <div class="task-tutorial">任务步骤<span :style="{color:taskData.main_color}">（注意☆号图例）</span></div>
                     <div class="tutorial-warp flex-item">
                         <div class="tutorial-item" :class="{'tutorial-active' : item.printscreen == 1}" v-for="(item, index) in taskData.step_list" :key="index" @click.stop="tapShowPreviewPopup(index)">
 <!--                            <img :src="item.img" alt="" class="tutorial-img"/>-->
                             <div class="tutorial-img" :style="{background: 'url(' + item.img + ') center center / cover no-repeat'}"></div>
-                            <div class="tutorial-mask">
+                            <div class="tutorial-mask" :style="{'border-color': taskData.main_color}">
                                 <div class="tutorial-sequence flex-item">{{index + 1}}</div>
-                                <div class="tutorial-star flex-item" v-if="item.printscreen == 1"><img src="../assets/images/star.png" alt=""></div>
+                                <div class="tutorial-star flex-item" :style="{background: taskData.main_color}" v-if="item.printscreen == 1"><img src="../assets/images/star.png" alt=""></div>
                             </div>
                         </div>
                     </div>
@@ -165,7 +166,7 @@
 
                 <div class="form-warp" v-if="uploadList.length > 0">
 					<!-- <div class="form-label">{{taskData.child_list[curTaskIndex].submit_text_list.length + 1}}. 根据 “图例教程” 上任务中遇到的对应截图</div> -->
-                    <div class="form-label">1. 截图凭证<span>（注意☆号图例）</span></div>
+                    <div class="form-label">1. 截图凭证<span :style="{color:taskData.main_color}">（注意☆号图例）</span></div>
                 </div>
                 <div class="tutorial-warp flex-item" v-if="uploadList.length > 0">
                     <div class="upload-item" v-for="(item, index) in uploadList" :key="index">
@@ -198,18 +199,19 @@
         <transition name="fade">
             <div class="preview-popup" v-if="isShowPreviewPopup" @touchmove.prevent="maskMove">
                 <div class="preview-head flex-item">
-                    <div class="preview-num"><span :style="{'color' : taskData.step_list[swiperIndex - 1].printscreen == 1 ? '#FF8455' : '#FFFFFF'}">{{swiperIndex}}</span>/{{taskData.step_list.length}}</div>
+                    <div class="preview-num"><span :style="{'color' : taskData.step_list[swiperIndex - 1].printscreen == 1 ? taskData.main_color : '#FFFFFF'}">{{swiperIndex}}</span>/{{taskData.step_list.length}}</div>
                     <div>{{taskData.step_list[swiperIndex - 1].desc}}</div>
                 </div>
                 <swiper :options="swiperOption">
                     <swiper-slide v-for="(item, index) in taskData.step_list" :key="index">
-                        <div class="swiper-warp" :class="{'swiper-border' : item.printscreen == 1}">
+                        <div class="swiper-warp" :class="{'swiper-border' : item.printscreen == 1}" :style="{'border-color': taskData.main_color}">
                             <div class="swiper-cont">
 <!--                                <img :src="item.img" alt="" />-->
                                 <div :style="{background: 'url(' + item.img + ') center center / auto 100% no-repeat', width: '100%', height: '100%'}"></div>
                             </div>
-                            <div class="preview-tips flex-item" v-if="item.printscreen == 1">● 完成此步骤后请<span>“截图”</span>，审核任务时需要提交 ●</div>
-                            <div class="preview-foot">任务{{curTaskIndex + 1}}： {{taskData.child_list[curTaskIndex].title}}</div>
+                            <div class="preview-tips flex-item" :style="{background: taskData.main_color}" v-if="item.printscreen == 1">● 完成此步骤后请<span>“截图”</span>，审核任务时需要提交 ●</div>
+                            <div class="preview-foot"
+							:style="{'border-color': taskData.main_color}">任务{{curTaskIndex + 1}}： {{taskData.child_list[curTaskIndex].title}}</div>
                         </div>
                     </swiper-slide>
                     <div class="swiper-pagination" slot="pagination"></div>
@@ -666,6 +668,7 @@
                 }
                 if(localStorage.getItem('userInfo')){
                     var userInfo = JSON.parse(localStorage.getItem('userInfo'))
+					console.log(userInfo)
                     if(userInfo.source != 'cpl' && !userInfo.phone){
                         this.$toast.center("请先登录");
                         this.showLogin = true;

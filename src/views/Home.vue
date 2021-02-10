@@ -662,6 +662,7 @@
                     this.$api.post('api/v1/user/info', {
                         session_id: localStorage.getItem('sessionId'), //登录标识
                     }).then( res => {
+						localStorage.setItem('userInfo', JSON.stringify(res))
                         this.userData = res
                     });
                 });
@@ -1169,6 +1170,7 @@
                 this.$api.post('api/v1/user/info', {
                     session_id: localStorage.getItem('sessionId'), //登录标识
                 }).then( res => {
+					localStorage.setItem('userInfo', JSON.stringify(res))
                     this.userData = res
                 });
 
@@ -1214,6 +1216,17 @@
                 this.iconTipsContentList = res.rights_label_desc
                 this.iconTipsList = res.rights_label
             })
+			
+			if(this.isCPL){
+				let userInfo = localStorage.getItem("userInfo")
+				if(userInfo && userInfo.source != 'cpl'){
+					localStorage.removeItem("userInfo");
+					localStorage.removeItem("sessionId");
+				}else if(!userInfo){
+					localStorage.removeItem("userInfo");
+					localStorage.removeItem("sessionId");
+				}
+			}
 
             if(this.GetUrlParam("qlx_trackid")) localStorage.setItem('trackId', this.GetUrlParam("qlx_trackid"))
             const is_login = localStorage.getItem('sessionId')
@@ -1240,6 +1253,7 @@
                     this.$api.post('api/v1/user/info', {
                         session_id: localStorage.getItem('sessionId'), //登录标识
                     }).then( res => {
+						localStorage.setItem('userInfo', JSON.stringify(res))
                         this.userData = res
                     });
                 }, 300000)

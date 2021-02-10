@@ -71,7 +71,7 @@ router.beforeEach((to, from, next) => {
     if (to.meta.title) {
         document.title = to.meta.title;
     } else
-        document.title = '趣拉新';
+        document.title = '任务大厅';
 
     if(to.query.qlx_trackid) localStorage.setItem('trackId', to.query.qlx_trackid);
     if ((isWechat() || isQQ() || isAli()) && to.name !== ERROR_PAGE_NAME) {
