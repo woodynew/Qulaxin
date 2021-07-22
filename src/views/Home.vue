@@ -124,7 +124,7 @@
                         <div class="warp-head flex-item">
                             <div class="warp-tit" :style="warpTitSmall">任务大厅</div>
                             <div class="task-completed" @click.stop="viewCompletedList(true)" v-if="completedList.length > 0 && ongoingList.length == 0">查看完成的任务<span>！</span></div>
-                            <img src="../assets/images/logo_m.png" alt="" class="warp-logo" v-else-if="!isCPL"/>
+                            <!-- <img src="../assets/images/logo_m.png" alt="" class="warp-logo" v-else-if="!isCPL"/> -->
                         </div>
                         <div class="task-list">
                             <div class="task-card" :style="{boxShadow: '0.26667rem 0.26667rem 0' + item.second_color}" v-for="(item, index) in taskList" :key="index" @click.stop="tapToGrabTask(item.id)">
@@ -202,7 +202,7 @@
 <!--        <div class="nomore">&#45;&#45; END &#45;&#45;</div>-->
 
         <div class="loading-warp" v-if="!loading&&!isData">
-            <img class="loading-logo" src="../assets/images/logo.png" alt=""/>
+            <!-- <img class="loading-logo" src="../assets/images/logo.png" alt=""/> -->
         </div>
 
         <div class="mask" @touchmove.prevent="maskMove" v-if="isShowPopup || iconTipsPopup" @click.stop="isShowPopup = false; iconTipsPopup = false"></div>
